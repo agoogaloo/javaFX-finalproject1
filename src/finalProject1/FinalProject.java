@@ -1,5 +1,9 @@
 package finalProject1;
 
+import java.util.concurrent.ThreadLocalRandom;
+
+import entities.Entity;
+import entities.Robot;
 import finalProject1.board.Board;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
@@ -18,8 +22,16 @@ public class FinalProject extends Application{
 
 	public static final int PIXEL_SCALE = 3;
 	private Group root;
+	private Robot rob;
+	private int time=0;
+	
 	
 	Timeline timeLine = new Timeline(new KeyFrame(Duration.seconds(1), event->{
+		time++;
+		if(time%120==0) {
+			rob.move(ThreadLocalRandom.current().nextInt(0,7),ThreadLocalRandom.current().nextInt(0,7));
+		}
+		Entity.getManager().update();
 		
 	}));
 	
@@ -46,9 +58,10 @@ public class FinalProject extends Application{
 	
 	private void run() {
 		Rectangle bg = new Rectangle(0, 0, 600*PIXEL_SCALE, 300*PIXEL_SCALE);
-		bg.setFill(new Color(0.2,0.2,0.2,1));
+		bg.setFill(new Color(0.1,0.1,0.1,1));//filling in the background
 		add(bg);
-		new Board(this, 95, 50, 7, 7);
+		new Board(this,7, 7);
+		rob=new Robot(this);
 		
 		timeLine.setCycleCount(Animation.INDEFINITE);
 		timeLine.play();
