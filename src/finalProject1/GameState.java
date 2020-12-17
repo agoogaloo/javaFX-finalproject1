@@ -27,6 +27,7 @@ public class GameState {
 			money1Text = new Text(50*FinalProject.PIXEL_SCALE,30," a"),money2Text = new Text(250*FinalProject.PIXEL_SCALE,30," b");
 	private ImageView buyHeli = new ImageView(Assets.heliBot);
 	private ImageView buyTank = new ImageView(Assets.tank);
+	TurnState turnState = TurnState.IDLE;
 	
 	
 	
@@ -107,26 +108,71 @@ public class GameState {
 			//do player 1 winning things
 			turnText.setText("player 1 wins");
 		}
-		switchTurns();
-		
+		switchTurns();		
 		//updating the entities
 		Entity.getManager().update();
 		
 	}
 	
 	private void buyBots() {
-		if(buyHeli.isPressed()) {
-			new HeliBot(project, turn,turn*2,3);
-		}else if(buyTank.isPressed()) {
-			new Tank(project, turn,turn*2,3);
+		int heliPrice=3,tankPrice=2;
+		Point mouseLoc=Board.PixelsToTiles(Inputs.getX(), Inputs.getY());
+		if(mouseLoc.x<0||mouseLoc.y<0||mouseLoc.x>=Board.WIDTH|mouseLoc.y>=Board.HEIGHT) {
+			turnState=TurnState.IDLE;
+			return;
 		}
+		switch (turnState) {
+		case BUYHELI:
+			if(turn==1) {
+				if(money1>=heliPrice) {
+					new HeliBot(project, 1,mouseLoc.x,mouseLoc.y).endTurn();
+					money1-=heliPrice;
+				}
+			}else if(turn==2) {
+				if(money1>=tankPrice) {
+					new HeliBot(project, 2,mouseLoc.x,mouseLoc.y).endTurn();
+					money2-=heliPrice;
+				}
+			}
+			break;
+		case BUYTANK:
+			if(turn==1) {
+				if(money1>=tankPrice) {
+					new Tank(project, 1,mouseLoc.x,mouseLoc.y).endTurn();
+					money1-=tankPrice;
+				}
+			}else if(turn==2) {
+				if(money1>=tankPrice) {
+					new Tank(project, 2,mouseLoc.x,mouseLoc.y).endTurn();
+					money2-=tankPrice;
+				}
+			}
+			break;
+
+			
+		default:
+			return;
+		}
+		turnState=TurnState.IDLE;
 	}
 	/**
 	 * this checks if the turn is over and goes to the next turn if it should switch
 	 */
 	private void onClick() {
-		buyBots();
 		Point mouseLoc=Board.PixelsToTiles(Inputs.getX(), Inputs.getY());
+		buyBots();
+		if(buyHeli.isPressed())
+			turnState=TurnState.BUYHELI;
+		else if(buyTank.isPressed())
+			turnState=TurnState.BUYTANK;
+		else if(Entity.getManager().getEntity(mouseLoc.x, mouseLoc.y) instanceof Robot) {
+			selected=Entity.getManager().getEntity(mouseLoc.x, mouseLoc.y);	
+			turnState = TurnState.ROBOTSELECT;
+		}else {
+			turnState=TurnState.IDLE;
+		}
+		
+		
 		if(selected instanceof Robot) {
 			Robot robot=(Robot) selected;
 			if(robot.canMove()) {
