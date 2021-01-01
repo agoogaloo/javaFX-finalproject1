@@ -2,24 +2,22 @@ package finalProject1.board;
 
 import java.awt.Point;
 
+import finalProject1.Assets;
 import finalProject1.FinalProject;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 public class Board {
 	//this just draws the board but it could be changed fairly easily to allow for different terrains
 	
 	//board constants that are needed to convert pixel locations into tiles
-	public static final int TILE_WIDTH=31, TILE_HEIGHT=23, OFFSET_X=95,OFFSET_Y=50;
+	public static final int TILE_WIDTH=31, TILE_HEIGHT=23, OFFSET_X=113,OFFSET_Y=40;
 	public static final int WIDTH=7,HEIGHT=7;
 	
 	private ImageView[][] tiles = new ImageView[WIDTH][HEIGHT];
-	private Image highlightTile= new Image("res/tileSelect.png",(TILE_WIDTH+1)*FinalProject.PIXEL_SCALE,0,true,false);
-	private Image tilePic = new Image("res/board.png",(TILE_WIDTH+1)*FinalProject.PIXEL_SCALE,0,true,false);
 	public Board(FinalProject project) {
 		for(int i=0;i<HEIGHT;i++) {
 			for(int j=0;j<WIDTH;j++) {
-				ImageView tile =new ImageView(tilePic);
+				ImageView tile =new ImageView(Assets.tile);
 				Point location=tilesToPixels(j, i);
 				
 				
@@ -34,13 +32,18 @@ public class Board {
 	
 	public void highlightTile(int x, int y) {
 		if(x>=0&&y>=0&&x<WIDTH&&y<HEIGHT)
-			tiles[x][y].setImage(highlightTile);
+			tiles[x][y].setImage(Assets.tileHighlight);
 		
 	}
-	public void deHighlight() {
+	public void selectTile(int x, int y) {
+		if(x>=0&&y>=0&&x<WIDTH&&y<HEIGHT)
+			tiles[x][y].setImage(Assets.tileSelect);
+		
+	}
+	public void reset() {
 		for(int i=0;i<tiles.length;i++) {
 			for(int j=0;j<tiles[0].length;j++) {
-				tiles[i][j].setImage(tilePic);
+				tiles[i][j].setImage(Assets.tile);
 			}
 		}
 		

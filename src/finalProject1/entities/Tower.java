@@ -1,5 +1,6 @@
 package finalProject1.entities;
 
+import finalProject1.Assets;
 import finalProject1.FinalProject;
 import javafx.scene.image.ImageView;
 

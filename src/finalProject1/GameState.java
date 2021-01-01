@@ -1,9 +1,9 @@
 package finalProject1;
 
 import java.awt.Point;
+import java.awt.event.PaintEvent;
 
 import finalProject1.board.Board;
-import finalProject1.entities.Assets;
 import finalProject1.entities.Entity;
 import finalProject1.entities.Tower;
 import finalProject1.entities.robots.HeliBot;
@@ -11,20 +11,21 @@ import finalProject1.entities.robots.Robot;
 import finalProject1.entities.robots.Tank;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
+import javafx.scene.paint.Paint;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
 public class GameState {
 	private final int PLAYERS=2;
 	private int turn=1;
-	private int money1=5,money2=5;
+	private int money1=3,money2=3;
 	
 	private FinalProject project;
 	private Board board;
 	private Entity selected;
 	
-	private Text turnText = new Text(150*FinalProject.PIXEL_SCALE,10*FinalProject.PIXEL_SCALE,"player 1 turn"), 
-			money1Text = new Text(50*FinalProject.PIXEL_SCALE,30," a"),money2Text = new Text(250*FinalProject.PIXEL_SCALE,30," b");
+	private Text turnText = new Text(158*FinalProject.PIXEL_SCALE,30*FinalProject.PIXEL_SCALE,"Player 1 turn"), 
+			money1Text = new Text(60*FinalProject.PIXEL_SCALE,30," a"),money2Text = new Text(250*FinalProject.PIXEL_SCALE,30," b");
 	private ImageView buyHeli = new ImageView(Assets.heliBot);
 	private ImageView buyTank = new ImageView(Assets.tank);
 	TurnState turnState = TurnState.IDLE;
@@ -36,11 +37,12 @@ public class GameState {
 	public GameState(FinalProject project) {
 		this.project=project;
 		turnText.setFill(Color.WHITESMOKE);
-		turnText.setFont(Font.font("Comic Sans", 22));
+		turnText.setFont(Assets.boldfont);
+		
 		money1Text.setFill(Color.WHITESMOKE);
-		money1Text.setFont(Font.font("Comic Sans", 22));
+		money1Text.setFont(Assets.font);
 		money2Text.setFill(Color.WHITESMOKE);
-		money2Text.setFont(Font.font("Comic Sans", 22));
+		money2Text.setFont(Assets.font);
 		board = new Board(project);	
 		
 		new Tank(project,1,1,1);
@@ -68,19 +70,31 @@ public class GameState {
 	}
 	public void update() {
 		//updating the text boxen
-		turnText.setText("player "+turn+" turn");
+		turnText.setText("PLAYER "+turn+" TURN");
 		money1Text.setText(money1+"");
 		money2Text.setText(money2+"");
 				
 		///getting the mouses location
 		
 		Point mouseLoc=Board.PixelsToTiles(Inputs.getX(), Inputs.getY());
-		board.deHighlight();
+		board.reset();
 		board.highlightTile(mouseLoc.x, mouseLoc.y);
+		showInfo(Entity.getManager().getEntity(mouseLoc.x,mouseLoc.y));
 		
 		//highlighting the selected robot
-		if(selected!=null) {
-			board.highlightTile(selected.getX(),selected.getY());
+		if(turnState==TurnState.ROBOTSELECT) {
+			board.selectTile(selected.getX(),selected.getY());
+			
+			if(((Robot) selected).canMove()) {
+				for(Point i:((Robot) selected).movableTiles()) {
+					board.highlightTile(i.x, i.y);
+				}
+			}else if(((Robot) selected).canAttack()) {
+				for(Point i:((Robot) selected).attackableTiles()) {
+					board.highlightTile(i.x, i.y);
+				}
+			}
+			
 		}
 		
 		if(Inputs.isClicked()) {
@@ -155,12 +169,46 @@ public class GameState {
 		}
 		turnState=TurnState.IDLE;
 	}
+	
+	private void showInfo(Entity e) {
+		for(Entity i:Entity.getManager().getEntities(1)) {
+			i.hideInfo();
+		}
+		for(Entity i:Entity.getManager().getEntities(2)) {
+			i.hideInfo();
+		}
+		if(e!=null) {
+			e.showInfo();
+		}
+			
+		
+		
+	}
+	
 	/**
 	 * this checks if the turn is over and goes to the next turn if it should switch
 	 */
 	private void onClick() {
 		Point mouseLoc=Board.PixelsToTiles(Inputs.getX(), Inputs.getY());
 		buyBots();
+		if(turnState==TurnState.ROBOTSELECT) {
+			Robot robot=(Robot) selected;
+			if(robot.canMove()) {
+				if(!robot.move(mouseLoc.x, mouseLoc.y)) {
+					selected=null;
+					turnState=TurnState.IDLE;					
+				}
+			}else if (robot.canAttack()) {
+				if(!robot.attack(mouseLoc.x, mouseLoc.y)) {
+					selected=null;
+					turnState=TurnState.IDLE;
+				}
+			}else { 
+				selected=null;
+				turnState=TurnState.IDLE;	
+			}
+		}
+				
 		if(buyHeli.isPressed())
 			turnState=TurnState.BUYHELI;
 		else if(buyTank.isPressed())
@@ -168,30 +216,8 @@ public class GameState {
 		else if(Entity.getManager().getEntity(mouseLoc.x, mouseLoc.y) instanceof Robot) {
 			selected=Entity.getManager().getEntity(mouseLoc.x, mouseLoc.y);	
 			turnState = TurnState.ROBOTSELECT;
-		}else {
-			turnState=TurnState.IDLE;
 		}
 		
-		
-		if(selected instanceof Robot) {
-			Robot robot=(Robot) selected;
-			if(robot.canMove()) {
-				if(!robot.move(mouseLoc.x, mouseLoc.y)) {
-					selected=null;
-				}
-			}else if (robot.canAttack()) {
-				if(!robot.attack(mouseLoc.x, mouseLoc.y)) {
-					selected=null;
-					
-				}
-			}else { 
-				selected=Entity.getManager().getEntity(mouseLoc.x, mouseLoc.y);	
-			}
-				
-			
-		}else{
-			selected=Entity.getManager().getEntity(mouseLoc.x, mouseLoc.y);	
-		}
 	}
 	
 	private void switchTurns() {

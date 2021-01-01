@@ -1,7 +1,7 @@
 package finalProject1.entities.robots;
 
+import finalProject1.Assets;
 import finalProject1.FinalProject;
-import finalProject1.entities.Assets;
 import javafx.scene.image.ImageView;
 
 public class Tank extends Robot{

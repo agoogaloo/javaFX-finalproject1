@@ -1,11 +1,10 @@
 package finalProject1.entities.robots;
 
+import finalProject1.Assets;
 import finalProject1.FinalProject;
-import finalProject1.entities.Assets;
 import javafx.scene.image.ImageView;
 
 public class HeliBot extends Robot{
-	private final static int IMG_WIDTH=32;
 	
 	public HeliBot(FinalProject project,int player) {
 		this(project,player, 0, 0);

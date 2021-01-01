@@ -32,11 +32,10 @@ public class FinalProject extends Application{
 	public void start(Stage stage) throws Exception {
 		stage.setTitle("a super cool fancy title");
 		root=new Group();
+		stage.setResizable(false);
 		Scene scene = new Scene(root);
 		stage.setScene(scene);
-		Canvas canvas = new Canvas(600, 400);
-		canvas.setScaleX(PIXEL_SCALE);
-		canvas.setScaleY(PIXEL_SCALE);
+		Canvas canvas = new Canvas(450*PIXEL_SCALE, 260*PIXEL_SCALE);
 		add(canvas);
 		stage.show();
 		root.requestFocus();
@@ -46,7 +45,7 @@ public class FinalProject extends Application{
 	
 	
 	private void run() {
-		Rectangle bg = new Rectangle(0, 0, 600*PIXEL_SCALE, 300*PIXEL_SCALE);
+		Rectangle bg = new Rectangle(0, 0, 450*PIXEL_SCALE, 260*PIXEL_SCALE);
 		bg.setFill(new Color(0.1,0.1,0.1,1));//filling in the background
 		add(bg);	
 		root.setOnMousePressed(Inputs.getMouseClick());
