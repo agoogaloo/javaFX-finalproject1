@@ -35,6 +35,7 @@ public abstract class Robot extends Entity{
 		moved=true;
 		attacked=true;
 	}
+	
 	@Override
 	public void showInfo() {
 		super.showInfo();

@@ -40,7 +40,7 @@ public class GameState {
 	
 	/**
 	 * this is the state the game is in when it is being played. currently there arent other 
-	 * states to switch to,but if i made was a main menu or pause screen,i would make it into its own state
+	 * states to switch to,but if i made was a main menu or pause screen,i would make it into its own state but i dont
 	 * @param project - the project or main class that this gamestate belongs to.
 	 */
 	public GameState(FinalProject project) {
@@ -58,19 +58,23 @@ public class GameState {
 		//creating the towers the players need to protect
 		new Tower(project, 1, 0, 0);
 		new Tower(project, 1, 0, 6);
-		
 		new Tower(project, 2, 6, 0);
 		new Tower(project, 2, 6, 6);
 		
+		//setting the location of the deck to buy cards from
 		buyCard.setX(209*FinalProject.PIXEL_SCALE);
 		buyCard.setY(4*FinalProject.PIXEL_SCALE);
 		
+		//adding everything to the screen that needs to be added
 		project.add(turnText);
 		project.add(buyCard);		
 	}
 	
+	/**
+	 * this is called every frame and basically runs the entire game
+	 */
 	public void update() {
-		///getting the mouses location
+		///getting the mouses location and converting it to tiles
 		Point mouseLoc=Board.PixelsToTiles(Inputs.getX(), Inputs.getY());
 		
 		//showing who's turn it is
@@ -81,33 +85,38 @@ public class GameState {
 			turnText.setX(64*FinalProject.PIXEL_SCALE);
 			turnText.setText("WAITING FOR \nPLAYER 2 TO \nFINISH THEIR TURN");	
 		}	
+		
 		//highlighting the tile that is being hovered and showing information about anything on it
-		board.reset();
-		board.highlightTile(mouseLoc.x, mouseLoc.y);
+		board.reset();//reseting the board so tiles wont stay highlighted
+		board.highlightTile(mouseLoc.x, mouseLoc.y);//highlighting
+		//showing the entities info if there is one on that tile
 		showInfo(Entity.getManager().getEntity(mouseLoc.x,mouseLoc.y));
 		
-		//highlighting the selected robot
+		//doing things if a robot has been selected
 		if(turnState==TurnState.ROBOTSELECT) {
+			//showing that the robot has been selected by changing its tile
 			board.selectTile(selected.getX(),selected.getY());
 			
-			if(((Robot) selected).canMove()) {
+			//showing the spaces it can attack/move
+			if(((Robot) selected).canMove()) {//showing movable tiles if it can move by highlighting them
 				for(Point i:((Robot) selected).movableTiles()) {
 					board.highlightTile(i.x, i.y);
 				}
+			//if it cant move but can still attack it will show the attackable tiles
 			}else if(((Robot) selected).canAttack()) {
 				for(Point i:((Robot) selected).attackableTiles()) {
 					board.highlightTile(i.x, i.y);
 				}
 			}
-			
 		}
-		
+		//doing things that happen when the mouse is clicked
 		if(Inputs.isClicked()) {
 			onClick();
 		}
 		
-		//checking if both players' towers are still there and showing the win screen if they arent
+		//checking if player 1's towers are still there and showing the win screen if they arent
 		boolean hasTowers=false;
+		//checking the 1st players entities
 		for(Entity i: Entity.getManager().getPlayer1()) {
 			if(i instanceof Tower) {
 				hasTowers=true;
@@ -118,6 +127,7 @@ public class GameState {
 			//do player 2 winning things
 			turnText.setText("player 2 wins");
 		}
+		//checking player 2s towers
 		hasTowers=false;
 		for(Entity i: Entity.getManager().getPlayer2()) {
 			if(i instanceof Tower) {
@@ -129,7 +139,7 @@ public class GameState {
 			//do player 1 winning things
 			turnText.setText("player 1 wins");
 		}
-		
+		//switching/checking if it should go to the next turn
 		switchTurns();		
 		//updating the entities
 		Entity.getManager().update();
@@ -137,51 +147,33 @@ public class GameState {
 		player1.update();
 		player2.update();
 		
+		//if the player is buying a robot and still needs to place it it should go switch to the buybot state
 		if(activePlayer.getSelectedBot()!=-1) {
 			turnState=TurnState.BUYBOT;
 		}
 	}
 	
-	private void buyBots() {
-		
-		
-		/*if(mouseLoc.x<0||mouseLoc.y<0||mouseLoc.x>=Board.WIDTH|mouseLoc.y>=Board.HEIGHT) {
-			turnState=TurnState.IDLE;
-			return;
-		}
-		switch (turnState) {
-		case BUYHELI:
-			if(turn==1) {
-				if(money1>=heliPrice) {
-					new HeliBot(project, 1,mouseLoc.x,mouseLoc.y).endTurn();
-					money1-=heliPrice;
-				}
-			}else if(turn==2) {
-				if(money1>=tankPrice) {
-					new HeliBot(project, 2,mouseLoc.x,mouseLoc.y).endTurn();
-					money2-=heliPrice;
-				}
-			}
-			break;
-		case BUYTANK:
-			if(turn==1) {
-				if(money1>=tankPrice) {
-					new Tank(project, 1,mouseLoc.x,mouseLoc.y).endTurn();
-					money1-=tankPrice;
-				}
-			}else if(turn==2) {
-				if(money1>=tankPrice) {
-					new Tank(project, 2,mouseLoc.x,mouseLoc.y).endTurn();
-					money2-=tankPrice;
-				}
-			}
-			break;
-
+	private void buyBots(Point mouseLoc) {
+		if((activePlayer.PLAYERNUM==1&&mouseLoc.x>=0&&mouseLoc.y>=0&&mouseLoc.x<=1&&mouseLoc.y<Board.HEIGHT)
+				||(activePlayer.PLAYERNUM==2&&mouseLoc.x>=Board.WIDTH-2&&
+				mouseLoc.y>=0&&mouseLoc.x<Board.WIDTH&&mouseLoc.y<Board.HEIGHT)
+				&&Entity.getManager().getEntity(mouseLoc.x, mouseLoc.y)==null) {
 			
-		default:
-			return;
-		}*/
-		//turnState=TurnState.IDLE;
+			
+			switch(activePlayer.getSelectedBot()) {
+			case Tank.ID:
+				new Tank(project, activePlayer.PLAYERNUM,mouseLoc.x,mouseLoc.y).endTurn();
+				break;
+			case HeliBot.ID:
+				new HeliBot(project, activePlayer.PLAYERNUM,mouseLoc.x,mouseLoc.y).endTurn();
+				break;
+			}
+			turnState=TurnState.IDLE;
+			activePlayer.placeBot();
+		}
+		return;
+		
+		
 	}
 	
 	private void showInfo(Entity e) {
@@ -201,28 +193,11 @@ public class GameState {
 	 */
 	private void onClick() {
 		Point mouseLoc=Board.PixelsToTiles(Inputs.getX(), Inputs.getY());
-		buyBots();
 		if(turnState==TurnState.BUYBOT) {
-			if((activePlayer.PLAYERNUM==1&&mouseLoc.x>=0&&mouseLoc.y>=0&&mouseLoc.x<=1&&mouseLoc.y<Board.HEIGHT)
-					||(activePlayer.PLAYERNUM==2&&mouseLoc.x>=Board.WIDTH-2&&
-					mouseLoc.y>=0&&mouseLoc.x<Board.WIDTH&&mouseLoc.y<Board.HEIGHT)
-					&&Entity.getManager().getEntity(mouseLoc.x, mouseLoc.y)==null) {
-				
-				
-				switch(activePlayer.getSelectedBot()) {
-				case Tank.ID:
-					new Tank(project, activePlayer.PLAYERNUM,mouseLoc.x,mouseLoc.y).endTurn();
-					break;
-				case HeliBot.ID:
-					new HeliBot(project, activePlayer.PLAYERNUM,mouseLoc.x,mouseLoc.y).endTurn();
-					break;
-				}
-				turnState=TurnState.IDLE;
-				activePlayer.placeBot();
-			}
+			buyBots(mouseLoc);
 			return;
-			
 		}
+		
 		if(turnState==TurnState.ROBOTSELECT) {
 			if(selected.canMove()) {
 				if(!selected.move(mouseLoc.x, mouseLoc.y)) {
