@@ -1,11 +1,15 @@
 package finalProject1.entities;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class EntityManager {
 	//ArrayList<Entity> entities = new ArrayList<>();
 	private ArrayList<Entity>player1=  new ArrayList<Entity>(), player2=  new ArrayList<Entity>();
 
+	public EntityManager() {
+	}
+	
 	public void addEntity(Entity e){
 	
 		if(e.getPlayer()==1)

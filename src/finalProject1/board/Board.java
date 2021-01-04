@@ -10,7 +10,7 @@ public class Board {
 	//this just draws the board but it could be changed fairly easily to allow for different terrains
 	
 	//board constants that are needed to convert pixel locations into tiles
-	public static final int TILE_WIDTH=31, TILE_HEIGHT=23, OFFSET_X=113,OFFSET_Y=40;
+	public static final int TILE_WIDTH=31, TILE_HEIGHT=23, OFFSET_X=113,OFFSET_Y=50;
 	public static final int WIDTH=7,HEIGHT=7;
 	
 	private ImageView[][] tiles = new ImageView[WIDTH][HEIGHT];

@@ -2,14 +2,16 @@ package finalProject1.entities;
 
 import java.awt.Point;
 
+import finalProject1.Assets;
 import finalProject1.FinalProject;
 import finalProject1.board.Board;
 import javafx.scene.Group;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
 
 public abstract class Entity {
+	
 	private static EntityManager manager=new EntityManager();//this stores all the entities
 	private ImageView img;
 	protected int x, y;// the entities location in tiles
@@ -17,10 +19,11 @@ public abstract class Entity {
 	protected int health=1;
 	protected int player;
 	protected boolean alive=true;
-	protected Group info = new Group();//this holds all the text and stuff that lets us know things about the entity
+	protected Group info = new Group();
+	protected Text infoText = new Text(113*FinalProject.PIXEL_SCALE,230*FinalProject.PIXEL_SCALE,"");//this holds all the text and stuff that lets us know things about the entity
+	protected String description = "";
 	
 
-	
 	/**
 	 * 
 	 * @param project - what the entity will be added to
@@ -32,11 +35,16 @@ public abstract class Entity {
 		if(player==2) {
 			img.setScaleX(-1);
 		}
+		infoText.setFont(Assets.font);
+		infoText.setFill(Color.WHITE);
+		info.setVisible(false);
+		info.getChildren().add(infoText);
+		
 		project.add(img);
 		project.add(info);
-		info.setVisible(false);
+
 		
-		manager.addEntity(this);//adding itself to the entitymanager
+		manager.addEntity(this);//adding itself to the entity manager
 	}
 	
 	
@@ -55,11 +63,11 @@ public abstract class Entity {
 		if(health<=0) {
 			alive=false;
 			img.setImage(null);
+			hideInfo();
 		}
 	}
 	
 	public void showInfo() {
-		Point loc = Board.tilesToPixels(x+1, y);
 		info.setVisible(true);
 	}
 	public void hideInfo() {
@@ -89,6 +97,7 @@ public abstract class Entity {
 	public int getY() {
 		return y;
 	}
+	
 	public ImageView getImg() {
 		return img;
 	}

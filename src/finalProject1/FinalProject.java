@@ -1,5 +1,6 @@
 package finalProject1;
 
+import gameState.GameState;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -60,6 +61,9 @@ public class FinalProject extends Application{
 	
 	public void add(Node node){
 		root.getChildren().add(node); 
+	}
+	public void remove(Node node) {
+		root.getChildren().remove(node);
 	}
 	
 	public GameState getGamestate() {

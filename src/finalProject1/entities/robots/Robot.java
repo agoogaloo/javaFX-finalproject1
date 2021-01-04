@@ -1,36 +1,29 @@
 package finalProject1.entities.robots;
 
 import java.awt.Point;
-import java.awt.geom.RoundRectangle2D;
 import java.util.ArrayList;
 
-import finalProject1.Assets;
 import finalProject1.FinalProject;
-import finalProject1.board.Board;
 import finalProject1.entities.Entity;
 import javafx.scene.image.ImageView;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Text;
 
 public abstract class Robot extends Entity{
 	
 	protected int range, speed, damage;
+	
 	private boolean moved, attacked;
 	
 	
 	
 	
-	public Robot(FinalProject project,ImageView img,int player ) {
+	
+	public Robot(FinalProject project,ImageView img,int player) {
 		this(project, img,player, 0, 0);
 	}
 	public Robot(FinalProject project,ImageView img, int player ,int x, int y) {
 		super(project, img,player);
 		this.x=x;
 		this.y=y;
-		Text infoText=new Text(150*FinalProject.PIXEL_SCALE,220*FinalProject.PIXEL_SCALE,"information stuff, woo cool info");
-		infoText.setFont(Assets.font);
-		info.getChildren().add(infoText);
 	}
 	
 	public void startTurn() {
@@ -41,6 +34,13 @@ public abstract class Robot extends Entity{
 	public void endTurn() {
 		moved=true;
 		attacked=true;
+	}
+	@Override
+	public void showInfo() {
+		super.showInfo();
+		infoText.setText("HP: "+ health+"    SPD: "+speed+"    DMG: "+damage+"    RNG: "+range+"\n"+description.toUpperCase());
+		
+		
 	}
 	
 	public boolean move(int x, int y) {
@@ -55,9 +55,11 @@ public abstract class Robot extends Entity{
 	}
 	
 	public boolean attack(int x, int y) {
-		if(!attackableTiles().contains(new Point(x,y))&&getManager().getEntity(x, y)!=null) {
+		System.out.println(getManager().getEntity(x, y));
+		if(!attackableTiles().contains(new Point(x,y))||getManager().getEntity(x, y)==null) {
 			return false;
 		}
+		System.out.println(getManager().getEntity(x, y));
 		getManager().getEntity(x, y).damage(damage);
 		attacked=true;
 		return true;
@@ -90,12 +92,22 @@ public abstract class Robot extends Entity{
 		
 	}
 	
-	
 	public boolean canMove() {
 		return !moved;
 	}
+	
 	public boolean canAttack() {
 		return !attacked;
 	}
+	public int getDamage() {
+		return damage;
+	}
+	public int getRange() {
+		return range;
+	}
+	public int getSpeed() {
+		return speed;
+	}
+	
 
 }
