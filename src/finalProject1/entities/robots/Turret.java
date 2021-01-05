@@ -21,8 +21,7 @@ public class Turret extends Robot{
 	
 	@Override
 	public void startTurn() {
-		moved=true;
+		moved=true;//the turret cant move so when it starts its turn it shouldnt be able to move
 		attacked=false;
 	}
-
 }

@@ -20,5 +20,6 @@ public class Tank extends Robot{
 		setyOffset(YOFFSET);
 		setxOffset(XOFFSET);
 	}
+	
 
 }

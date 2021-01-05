@@ -26,6 +26,7 @@ public abstract class Entity {
 	 * 
 	 * @param project - what the entity will be added to
 	 * @param img - an image that is what the entity will look like
+	 * @param player - what team the entity is on
 	 */
 	public Entity(FinalProject project, ImageView img, int player) {
 		this.img=img;
@@ -35,23 +36,28 @@ public abstract class Entity {
 			img.setScaleX(-1);
 		}
 		
-		
+		//adding the image so its visible
 		project.add(img);
 		
 		manager.addEntity(this);//adding itself to the entity manager
 	}
 	
-	
+	/**
+	 * this is called every frame
+	 */
 	public void update() {
-		Point loc= Board.tilesToPixels(x, y);
+		Point loc= Board.tilesToPixels(x, y);//the robots location in pixels
+		//offsetting the picture if it shoud be offset to look better
 		img.setX(loc.x+xOffset*FinalProject.PIXEL_SCALE);
-		img.setY(loc.y+yOffset*FinalProject.PIXEL_SCALE);	
-		if(health<=0) 
-			alive=false;
+		img.setY(loc.y+yOffset*FinalProject.PIXEL_SCALE);
 	}
-	
+	/**
+	 * this lets other entities damage this entity
+	 * @param damage - how much damage it takes
+	 */
 	public void damage(int damage) {
-		health-=damage;
+		health-=damage;//damaging the entity
+		//making it dead and removing it it it has no health left
 		if(health<=0) {
 			alive=false;
 			img.setImage(null);
@@ -92,4 +98,6 @@ public abstract class Entity {
 	public static EntityManager getManager() {
 		return manager;
 	}
+
+
 }
