@@ -4,6 +4,7 @@ import java.awt.Point;
 import java.util.ArrayList;
 
 import finalProject1.FinalProject;
+import finalProject1.board.Board;
 import finalProject1.entities.Entity;
 import javafx.scene.image.ImageView;
 
@@ -11,7 +12,7 @@ public abstract class Robot extends Entity{
 	
 	protected int range, speed, damage;
 	
-	private boolean moved, attacked;
+	protected boolean moved, attacked;
 	
 	
 	
@@ -37,11 +38,8 @@ public abstract class Robot extends Entity{
 	}
 	
 	@Override
-	public void showInfo() {
-		super.showInfo();
-		infoText.setText("HP: "+ health+"    SPD: "+speed+"    DMG: "+damage+"    RNG: "+range+"\n"+description.toUpperCase());
-		
-		
+	public String getDescription() {
+		return "HP: "+ health+"    SPD: "+speed+"    DMG: "+damage+"    RNG: "+range+"\n"+description.toUpperCase();
 	}
 	
 	public boolean move(int x, int y) {
@@ -84,7 +82,8 @@ public abstract class Robot extends Entity{
 		ArrayList<Point> arr = new ArrayList<>();
 		for(int i=-speed;i<=speed;i++) {
 			for(int j=-speed;j<=speed;j++) {
-				if(Math.abs(i)+Math.abs(j)<=speed&&getManager().getEntity(x+i,y+j)==null) {
+				if(Math.abs(i)+Math.abs(j)<=speed&&getManager().getEntity(x+i,y+j)==null&&
+						x+i>=0&&y+j>=0&&x+i<Board.WIDTH&&y+j<Board.HEIGHT) {
 					arr.add(new Point(x+i,y+j)); 
 				}
 			}

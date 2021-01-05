@@ -1,6 +1,6 @@
 package finalProject1;
 
-import gameState.GameState;
+import finalProject1.gameState.GameState;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -14,51 +14,63 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+/**
+ * this is the main class that launches the game
+ * @author
+ *
+ */
 public class FinalProject extends Application{
-
+	//how much the pixel art is scaled up. i cant just scale the entire thing at once
+	//because it will use antialias and ruin the pixel art
 	public static final int PIXEL_SCALE = 3;
-	private Group root;
+	private Group root;//the group that holds everything in the game 
 	GameState gamestate;
+	//thie timeline that updated the game 60 times a second
 	Timeline timeLine = new Timeline(new KeyFrame(Duration.seconds(1), event->{
+		//updating the game and then the inputs
 		gamestate.update();
 		Inputs.update();
 	}));
 	
-	
+	//the main method that launches the game
 	public static void main(String[] args) {
 		launch();	
 	}
 	
 	@Override
 	public void start(Stage stage) throws Exception {
+		//initializing everything
+		//setting the title
 		stage.setTitle("a super cool fancy title");
 		root=new Group();
+		//resizing the window could break the ui so i disable it
 		stage.setResizable(false);
-		Scene scene = new Scene(root);
-		stage.setScene(scene);
-		Canvas canvas = new Canvas(450*PIXEL_SCALE, 260*PIXEL_SCALE);
-		add(canvas);
-		stage.show();
+		Scene scene = new Scene(root);//creating a new scene
+		stage.setScene(scene);//adding the scene so we can see it
+		Canvas canvas = new Canvas(450*PIXEL_SCALE, 260*PIXEL_SCALE);//making the canvas the right size
+		add(canvas);//adding the canvas so its usable
+		stage.show();//showing thins so its not invisible
 		root.requestFocus();
-		run();
-		
+		run();	//running the game
 	}
 	
 	
 	private void run() {
+		//creating a rectangle for the background
 		Rectangle bg = new Rectangle(0, 0, 450*PIXEL_SCALE, 260*PIXEL_SCALE);
-		bg.setFill(new Color(0.1,0.1,0.1,1));//filling in the background
-		add(bg);	
+		bg.setFill(new Color(0.1,0.1,0.1,1));//making the background the right colour
+		add(bg);//adding the backgground so its visible
+		//adding the mouse inputs to the root so that they will actually work
 		root.setOnMousePressed(Inputs.getMouseClick());
 		root.setOnMouseMoved(Inputs.mouseMove);
-		
+		//initializing the gamestate
 		gamestate = new GameState(this);
 		 
-		timeLine.setCycleCount(Animation.INDEFINITE);
-		timeLine.play();
-		timeLine.setRate(60);
+		timeLine.setCycleCount(Animation.INDEFINITE);//making it run forever
+		timeLine.play();//starting the timeline
+		timeLine.setRate(60);//setting the framerate
 	}
-	
+	//these methods let you add or remove things from root, adding or removing them from the game
 	public void add(Node node){
 		root.getChildren().add(node); 
 	}
