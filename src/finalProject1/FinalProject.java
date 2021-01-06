@@ -1,6 +1,7 @@
 package finalProject1;
 
-import finalProject1.gameState.GameState;
+import finalProject1.states.MainMenu;
+import finalProject1.states.State;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -9,6 +10,7 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
@@ -24,11 +26,10 @@ public class FinalProject extends Application{
 	//because it will use antialias and ruin the pixel art
 	public static final int PIXEL_SCALE = 3;
 	private Group root;//the group that holds everything in the game 
-	GameState gamestate;
 	//thie timeline that updated the game 60 times a second
 	Timeline timeLine = new Timeline(new KeyFrame(Duration.seconds(1), event->{
 		//updating the game and then the inputs
-		gamestate.update();
+		State.getCurrentState().update();
 		Inputs.update();
 	}));
 	
@@ -64,7 +65,7 @@ public class FinalProject extends Application{
 		root.setOnMousePressed(Inputs.getMouseClick());
 		root.setOnMouseMoved(Inputs.mouseMove);
 		//initializing the gamestate
-		gamestate = new GameState(this);
+		State.setCurrentState(new MainMenu(this));
 		 
 		timeLine.setCycleCount(Animation.INDEFINITE);//making it run forever
 		timeLine.play();//starting the timeline
@@ -76,10 +77,6 @@ public class FinalProject extends Application{
 	}
 	public void remove(Node node) {
 		root.getChildren().remove(node);
-	}
-	
-	public GameState getGamestate() {
-		return gamestate;
 	}
 
 }

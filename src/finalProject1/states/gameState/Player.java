@@ -1,10 +1,9 @@
-package finalProject1.gameState;
+package finalProject1.states.gameState;
 
 import java.util.ArrayList;
 
 import finalProject1.Assets;
 import finalProject1.FinalProject;
-import finalProject1.TurnState;
 import finalProject1.entities.robots.HeliBot;
 import finalProject1.entities.robots.Tank;
 import finalProject1.entities.robots.TreadBot;

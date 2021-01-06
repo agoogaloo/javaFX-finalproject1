@@ -1,4 +1,4 @@
-package finalProject1.gameState;
+package finalProject1.states.gameState;
 
 import java.awt.Point;
 import java.util.ArrayList;
@@ -8,7 +8,6 @@ import java.util.concurrent.ThreadLocalRandom;
 import finalProject1.Assets;
 import finalProject1.FinalProject;
 import finalProject1.Inputs;
-import finalProject1.TurnState;
 import finalProject1.board.Board;
 import finalProject1.entities.Entity;
 import finalProject1.entities.Tower;
@@ -17,6 +16,7 @@ import finalProject1.entities.robots.Robot;
 import finalProject1.entities.robots.Tank;
 import finalProject1.entities.robots.TreadBot;
 import finalProject1.entities.robots.Turret;
+import finalProject1.states.State;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.image.ImageView;
@@ -25,9 +25,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
-public class GameState {
+public class GameState extends State{
 	
-	private final int PLAYERS=2;//how many players there are 
 	private Player player1, player2;//the 2 players
 	private Player activePlayer;//the player who's turn it is
 	
@@ -49,7 +48,6 @@ public class GameState {
 	
 	//this is added to the end turn button so that when it is clicked it goes to the next turn
 	private EventHandler<MouseEvent> endTurnClicked=new EventHandler<MouseEvent>() {
-
 		@Override
 		public void handle(MouseEvent arg0) {
 			//switching turns
@@ -75,8 +73,7 @@ public class GameState {
 	};
 	
 	/**
-	 * this is the state the game is in when it is being played. currently there arent other 
-	 * states to switch to,but if i made was a main menu or pause screen,i would make it into its own state but i dont
+	 * this is the state the game is in when it is actually being played.
 	 * @param project - the project or main class that this gamestate belongs to.
 	 */
 	public GameState(FinalProject project) {
@@ -122,6 +119,7 @@ public class GameState {
 		project.add(buyCard);
 		project.add(endTurn);
 	}
+	
 	
 	/**
 	 * this is called every frame and basically runs the entire game
@@ -202,6 +200,13 @@ public class GameState {
 		if(activePlayer.getSelectedBot()!=-1) {
 			turnState=TurnState.BUYBOT;
 		}
+	}
+	
+	@Override
+	public void end() {
+		project.remove(turnText);
+		project.remove(buyCard);
+		project.remove(endTurn);
 	}
 	
 	/**
