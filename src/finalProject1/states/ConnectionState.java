@@ -38,7 +38,7 @@ public class ConnectionState extends State{
 			info.setText("tell your oponent to join "+InetAddress.getLocalHost().getHostAddress());				
 		}else {
 			socketGetter=new SocketGetter(ip);
-			info.setText("connecting to "+InetAddress.getLocalHost().getHostAddress());	
+			info.setText("connecting to "+ip);	
 			//oponent=new Opponent(new Socket(InetAddress.getByName(ip),69));
 		}
 		socketGetter.start();
