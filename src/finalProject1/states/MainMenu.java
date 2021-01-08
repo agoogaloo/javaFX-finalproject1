@@ -1,5 +1,7 @@
 package finalProject1.states;
 
+import java.io.IOException;
+
 import finalProject1.Assets;
 import finalProject1.FinalProject;
 import finalProject1.states.gameState.GameState;
@@ -58,7 +60,16 @@ public class MainMenu extends State{
 	@Override
 	public void update() {
 		if(playButton.isPressed()) {
-			State.setCurrentState(new GameState(project));
+			ConnectionState state;
+			try {
+				state = new ConnectionState(project,ip.getText());
+			} catch (IOException e) {
+				System.out.println("an error occured while doing online things");
+				e.printStackTrace();
+				return;
+			}
+			State.setCurrentState(state);
+			System.out.println("started connection with ip:"+ip.getText());
 		}
 	}
 
