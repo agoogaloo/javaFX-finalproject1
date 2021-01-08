@@ -43,7 +43,12 @@ public class MainMenu extends State{
 		title.setFill(Color.WHITE);
 		title.setFont(Assets.boldfont);
 		
-		//adding everything
+		//adding everything to the game
+		
+	}
+	
+	@Override
+	public void start() {
 		project.add(playButton);
 		project.add(ip);
 		project.add(info);
@@ -59,10 +64,9 @@ public class MainMenu extends State{
 
 	@Override
 	public void end() {
-		project.remove(ip);
-		project.remove(playButton);
-		project.remove(info);
-		project.remove(title);
+		project.clear();
 	}
+
+	
 
 }

@@ -13,6 +13,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -50,7 +51,7 @@ public class FinalProject extends Application{
 		stage.setScene(scene);//adding the scene so we can see it
 		Canvas canvas = new Canvas(450*PIXEL_SCALE, 260*PIXEL_SCALE);//making the canvas the right size
 		add(canvas);//adding the canvas so its usable
-		stage.show();//showing thins so its not invisible
+		stage.show();//showing things so its not invisible
 		root.requestFocus();
 		run();	//running the game
 	}
@@ -58,10 +59,7 @@ public class FinalProject extends Application{
 	
 	private void run() {
 		//creating a rectangle for the background
-		Rectangle bg = new Rectangle(0, 0, 450*PIXEL_SCALE, 260*PIXEL_SCALE);
-		bg.setFill(new Color(0.1,0.1,0.1,1));//making the background the right colour
-		add(bg);//adding the backgground so its visible
-		//adding the mouse inputs to the root so that they will actually work
+		clear();
 		root.setOnMousePressed(Inputs.getMouseClick());
 		root.setOnMouseMoved(Inputs.mouseMove);
 		//initializing the gamestate
@@ -77,6 +75,13 @@ public class FinalProject extends Application{
 	}
 	public void remove(Node node) {
 		root.getChildren().remove(node);
+	}
+	public void clear() {
+		root.getChildren().clear();	
+		Rectangle bg = new Rectangle(0, 0, 450*PIXEL_SCALE, 260*PIXEL_SCALE);
+		bg.setFill(new Color(0.1,0.1,0.1,1));//making the background the right colour
+		add(bg);//adding the background so its visible
+		//bg.toBack();		
 	}
 
 }

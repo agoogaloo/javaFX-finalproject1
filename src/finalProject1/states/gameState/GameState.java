@@ -16,6 +16,7 @@ import finalProject1.entities.robots.Robot;
 import finalProject1.entities.robots.Tank;
 import finalProject1.entities.robots.TreadBot;
 import finalProject1.entities.robots.Turret;
+import finalProject1.states.GameEnd;
 import finalProject1.states.State;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
@@ -83,7 +84,7 @@ public class GameState extends State{
 		turnText.setFont(Assets.font);
 		infoText.setFont(Assets.font);
 		infoText.setFill(Color.WHITE);
-		project.add(infoText);
+		
 		
 		//the text for the end turn button
 		Text endTurnText=new Text(7*FinalProject.PIXEL_SCALE, 12*FinalProject.PIXEL_SCALE, "END TURN");
@@ -98,6 +99,16 @@ public class GameState extends State{
 		endTurn.getChildren().add(endTurnText);
 		endTurn.setOnMouseClicked(endTurnClicked);//adding the mouse event so it ends the turn when its clicked
 		
+		//setting the location of the deck to buy cards from
+		buyCard.setX(209*FinalProject.PIXEL_SCALE);
+		buyCard.setY(4*FinalProject.PIXEL_SCALE);
+		
+		//adding everything to the screen that needs to be added
+		
+	}
+	
+	@Override
+	public void start() {
 		board = new Board(project);	//creating the board
 		//creating the players and making player 1 go 1st
 		player1=new Player(1, project);
@@ -110,16 +121,11 @@ public class GameState extends State{
 		new Tower(project, 2, 6, 0);
 		new Tower(project, 2, 6, 6);
 		
-		//setting the location of the deck to buy cards from
-		buyCard.setX(209*FinalProject.PIXEL_SCALE);
-		buyCard.setY(4*FinalProject.PIXEL_SCALE);
-		
-		//adding everything to the screen that needs to be added
+		project.add(infoText);
 		project.add(turnText);
 		project.add(buyCard);
 		project.add(endTurn);
 	}
-	
 	
 	/**
 	 * this is called every frame and basically runs the entire game
@@ -177,6 +183,7 @@ public class GameState extends State{
 		if(!hasTowers) {
 			//do player 2 winning things
 			turnText.setText("player 2 wins");
+			State.setCurrentState(new GameEnd(project,2));
 		}
 		//checking player 2s towers
 		hasTowers=false;
@@ -189,6 +196,7 @@ public class GameState extends State{
 		if(!hasTowers) {
 			//do player 1 winning things
 			turnText.setText("player 1 wins");
+			State.setCurrentState(new GameEnd(project,1));
 		}
 		//updating the entities
 		Entity.getManager().update();
@@ -204,9 +212,7 @@ public class GameState extends State{
 	
 	@Override
 	public void end() {
-		project.remove(turnText);
-		project.remove(buyCard);
-		project.remove(endTurn);
+		project.clear();
 	}
 	
 	/**
