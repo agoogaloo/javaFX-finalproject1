@@ -1,27 +1,31 @@
 package finalProject1.states.gameState;
 
+import finalProject1.FinalProject;
+
 public abstract class GamePlayer {
-	protected boolean doneTurn;
+	protected boolean doneTurn=true;
 	protected int money;
-	//this holds where that are moving/attacking and what robot that are using
-	int[] move= {-1,-1,-1,-1}, attack= {-1,-1,-1,-1};
+	protected int playerNum;
+	protected FinalProject project;
 	
-	
-	public GamePlayer() {
-		
+	public GamePlayer(FinalProject project) {
+		this.project=project;
 	}
 	
 	public abstract void update();
 	
+	public void startTurn() {
+		doneTurn=false;
+	}
+	public int getMoney() {
+		return money;
+	}
+	public boolean isDoneTurn() {
+		return doneTurn;
+	}
+	public int getPlayerNum() {
+		return playerNum;
+	}
 	
-	public int[] getMove() {
-		int[]value=move;
-		move= new int[]{-1,-1,-1,-1};
-		return value;
-	}
-	public int[] getAttack() {
-		int[]value=attack;
-		attack= new int[]{-1,-1,-1,-1};
-		return value;
-	}
+	
 }

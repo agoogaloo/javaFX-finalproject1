@@ -16,34 +16,37 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
 public class ConnectionState extends State{
-
+	private FinalProject project;
+	
 	private boolean ready=false, opponentReady=false;
 	private Group startButton = new Group();//this is the button on the bottom that lets you end your turn
-	Text info = new Text(80*FinalProject.PIXEL_SCALE, 100*FinalProject.PIXEL_SCALE, 
+	
+	private Text info = new Text(80*FinalProject.PIXEL_SCALE, 100*FinalProject.PIXEL_SCALE, 
 			"trying to connect to your opponent. please wait");
-	FinalProject project;
 	
 	//internet things
-	String ip;
-	ServerSocket server;
-	SocketGetter socketGetter;
+	private boolean isServer;
+	private String ip;
+	private SocketGetter socketGetter;
 	//Socket opponentSocket;
-	NetworkData oponent;
+	private NetworkData oponent;
 	
 	public ConnectionState(FinalProject project, String ip) throws IOException {
 		this.project=project;
 		
 		if(ip.equals("server")) {
 			//do server making things
+			isServer=true;
 			socketGetter=new SocketGetter(new ServerSocket(69));
 		
 			info.setText("tell your oponent to join "+InetAddress.getLocalHost().getHostAddress());				
 		}else {
+			isServer=false;
 			socketGetter=new SocketGetter(ip);
 			info.setText("connecting to "+ip);	
-			//oponent=new Opponent(new Socket(InetAddress.getByName(ip),69));
 		}
 		socketGetter.start();
+		System.out.println("isserver:"+isServer);
 
 	}
 	
@@ -92,7 +95,7 @@ public class ConnectionState extends State{
 		}
 		
 		if(ready&&opponentReady) {
-			setCurrentState(new GameState(project, oponent));
+			setCurrentState(new GameState(project, oponent,isServer));
 		}
 	}
 

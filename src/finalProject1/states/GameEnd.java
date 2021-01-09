@@ -57,7 +57,7 @@ public class GameEnd extends State{
 	@Override
 	public void update() {
 		if(restartButton.isPressed()) {
-			State.setCurrentState(new GameState(project));
+			//State.setCurrentState(new GameState(project));
 		}else if(quitButton.isPressed()) {
 			State.setCurrentState(new MainMenu(project));
 		}
