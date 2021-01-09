@@ -16,6 +16,7 @@ import finalProject1.entities.robots.Robot;
 import finalProject1.entities.robots.Tank;
 import finalProject1.entities.robots.TreadBot;
 import finalProject1.entities.robots.Turret;
+import finalProject1.network.NetworkData;
 import finalProject1.states.GameEnd;
 import finalProject1.states.State;
 import javafx.event.EventHandler;
@@ -28,8 +29,8 @@ import javafx.scene.text.Text;
 
 public class GameState extends State{
 	
-	private Player player1, player2;//the 2 players
-	private Player activePlayer;//the player who's turn it is
+	private OldPlayer player1, player2;//the 2 players
+	private OldPlayer activePlayer;//the player who's turn it is
 	
 	private FinalProject project;
 	private Board board;//the board that the game is played on
@@ -77,7 +78,7 @@ public class GameState extends State{
 	 * this is the state the game is in when it is actually being played.
 	 * @param project - the project or main class that this gamestate belongs to.
 	 */
-	public GameState(FinalProject project) {
+	public GameState(FinalProject project, NetworkData opponent) {
 		this.project=project;
 		//setting the text font and colour
 		turnText.setFill(Color.WHITE);
@@ -111,8 +112,8 @@ public class GameState extends State{
 	public void start() {
 		board = new Board(project);	//creating the board
 		//creating the players and making player 1 go 1st
-		player1=new Player(1, project);
-		player2=new Player(2, project);
+		player1=new OldPlayer(1, project);
+		player2=new OldPlayer(2, project);
 		activePlayer=player1;
 		
 		//creating the towers the players need to protect

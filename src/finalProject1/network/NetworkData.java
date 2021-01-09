@@ -5,11 +5,14 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 
-public class Opponent {
+public class NetworkData {
+	//these are seperators in the data that determine what the data that is given means
+	//this class does nothing with them but other classes do
+	public static final char SEPERATOR=',',ATTACK='A',MOVE='M',ENDTURN='E',CARDS='C';
 	DataInputStream inData;
 	DataOutputStream outData;
 
-	public Opponent(Socket socket) {
+	public NetworkData(Socket socket) {
 		try {
 			inData = new DataInputStream(socket.getInputStream());
 			outData = new DataOutputStream(socket.getOutputStream());

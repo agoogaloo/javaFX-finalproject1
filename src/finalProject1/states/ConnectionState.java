@@ -8,7 +8,8 @@ import java.net.UnknownHostException;
 
 import finalProject1.Assets;
 import finalProject1.FinalProject;
-import finalProject1.network.Opponent;
+import finalProject1.network.NetworkData;
+import finalProject1.states.gameState.GameState;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -16,7 +17,8 @@ import javafx.scene.text.Text;
 
 public class ConnectionState extends State{
 
-	private Group testButton = new Group();//this is the button on the bottom that lets you end your turn
+	private boolean ready=false, opponentReady=false;
+	private Group startButton = new Group();//this is the button on the bottom that lets you end your turn
 	Text info = new Text(80*FinalProject.PIXEL_SCALE, 100*FinalProject.PIXEL_SCALE, 
 			"trying to connect to your opponent. please wait");
 	FinalProject project;
@@ -26,7 +28,7 @@ public class ConnectionState extends State{
 	ServerSocket server;
 	SocketGetter socketGetter;
 	//Socket opponentSocket;
-	Opponent oponent;
+	NetworkData oponent;
 	
 	public ConnectionState(FinalProject project, String ip) throws IOException {
 		this.project=project;
@@ -52,18 +54,18 @@ public class ConnectionState extends State{
 		endTurnText.setFill(Color.WHITE);
 		endTurnText.setFont(Assets.boldfont);
 		//moving the endturn button to the right spot and adding the graphics to it
-		testButton.setTranslateX(175*FinalProject.PIXEL_SCALE);
-		testButton.setTranslateY(150*FinalProject.PIXEL_SCALE);
-		testButton.getChildren().add(new Rectangle(100*FinalProject.PIXEL_SCALE,
+		startButton.setTranslateX(175*FinalProject.PIXEL_SCALE);
+		startButton.setTranslateY(150*FinalProject.PIXEL_SCALE);
+		startButton.getChildren().add(new Rectangle(100*FinalProject.PIXEL_SCALE,
 				30*FinalProject.PIXEL_SCALE,new Color(0.047, 0.047, 0.047, 1)));
-		testButton.getChildren().add(endTurnText);
+		startButton.getChildren().add(endTurnText);
 		
 		//the instruction text
 		info.setFill(Color.WHITE);
 		info.setFont(Assets.font);
 				
 		
-		project.add(testButton);
+		project.add(startButton);
 		project.add(info);
 		
 		
@@ -75,14 +77,22 @@ public class ConnectionState extends State{
 	@Override
 	public void update() {
 		if(socketGetter.hasSocket()) {
-			oponent=new Opponent(socketGetter.getSocket());
+			oponent=new NetworkData(socketGetter.getSocket());
+			info.setText("connected to "+socketGetter.getSocket().getInetAddress().getHostName());
 		}
 		
-		if(oponent!=null&&testButton.isPressed()) {
-			oponent.sendData("pushed");
+		if(oponent!=null&&startButton.isPressed()) {
+			oponent.sendData("ready");
+			ready=true;
+			info.setText("waiting for opponent to get ready");
 		}
-		if(oponent!=null&&oponent.getData().equals("pushed")) {
-			info.setText("youve been booped");
+		if(oponent!=null&&oponent.getData().equals("ready")) {
+			info.setText("your opponent is ready");
+			opponentReady=true;
+		}
+		
+		if(ready&&opponentReady) {
+			setCurrentState(new GameState(project, oponent));
 		}
 	}
 
