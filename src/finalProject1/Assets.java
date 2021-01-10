@@ -24,8 +24,10 @@ public class Assets {
 	public static final Image tileHighlight = new Image("res/tileHighlight.png",(Board.TILE_WIDTH+1)*FinalProject.PIXEL_SCALE,0,true,false);
 	public static final Font boldfont = loadFont("src/res/boldfont.ttf");
 	public static final Font font = loadFont("src/res/font.ttf");
-	public static final Image cardBack= new Image("res/card back.png",32*FinalProject.PIXEL_SCALE,0,true,false);
+	public static final Image cardBack= new Image("res/card back.png",38*FinalProject.PIXEL_SCALE,0,true,false);
 	public static final Image cardFront= new Image("res/card front.png",38*FinalProject.PIXEL_SCALE,0,true,false);
+	public static final Image deck= new Image("res/deck.png",33*FinalProject.PIXEL_SCALE,0,true,false);
+	public static final Image arrow= new Image("res/selection.png",5*FinalProject.PIXEL_SCALE,0,true,false);
 	
 	/**
 	 * this loads a font at a specific path or returns null if it doesnt exist

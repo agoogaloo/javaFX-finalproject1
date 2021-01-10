@@ -36,7 +36,8 @@ public class Player extends GamePlayer{
 	
 	private ArrayList<Integer> hand = new ArrayList<>();//the id of the robots in their hand
 	private ArrayList<Group> handPics = new ArrayList<>();//the pictures of the cards
-	private ImageView buyCard = new ImageView(Assets.cardBack);//the button to buy a new card
+	private ImageView buyCard = new ImageView(Assets.deck);//the button to buy a new card
+	private ImageView selecttionArrow = new ImageView(Assets.arrow);
 	
 	private Group endTurn=new Group();
 	
@@ -44,8 +45,11 @@ public class Player extends GamePlayer{
 		super(project);
 		this.board=board;
 		playerNum=1;
-		buyCard.setX(209*FinalProject.PIXEL_SCALE);
-		buyCard.setY(4*FinalProject.PIXEL_SCALE);
+		buyCard.setX(208*FinalProject.PIXEL_SCALE);
+		buyCard.setY(3*FinalProject.PIXEL_SCALE);
+		
+		selecttionArrow.setX(10*FinalProject.PIXEL_SCALE);
+		selecttionArrow.setVisible(false);
 		
 		
 		//the text for the end turn button
@@ -67,7 +71,8 @@ public class Player extends GamePlayer{
 		
 		project.add(turnText);
 		project.add(endTurn);
-		project.add(buyCard);		
+		project.add(buyCard);
+		project.add(selecttionArrow);
 		
 		money+=2;
 		buyCard();
@@ -109,7 +114,7 @@ public class Player extends GamePlayer{
 			buyBot(mouseLoc,hand.get(selectedCard));
 			//making sure you cant do anytihng other than place a card so you dont mess up 
 			//the card selection
-			return;
+			//return;
 		}
 		//doing things if a robot has been selected to move/attack
 		if(turnState==TurnState.ROBOTSELECT) {
@@ -172,12 +177,10 @@ public class Player extends GamePlayer{
 		//this part creates the card out of a few  pictures and textboxes
 		Group card = new Group();//the card to be added
 		
-		//putting the card on the left or right depending on what player is drawing the card
-		if(playerNum==1) {
-			card.setTranslateX(10*FinalProject.PIXEL_SCALE);
-		}else if(playerNum==2) {
-			card.setTranslateX(402*FinalProject.PIXEL_SCALE);
-		}
+		
+		
+		card.setTranslateX(10*FinalProject.PIXEL_SCALE);
+		
 		//adding the background to the card
 		card.getChildren().add(new ImageView(Assets.cardFront));
 
@@ -227,7 +230,9 @@ public class Player extends GamePlayer{
 	}
 	
 	private void buyBot(Point loc, int id) {
-		
+		turnState=TurnState.IDLE;
+		selecttionArrow.setVisible(false);
+		handPics.get(selectedCard).setTranslateX(10*FinalProject.PIXEL_SCALE);
 		if(loc.x>=0&&loc.y>=0&&loc.x<=1&&loc.y<Board.HEIGHT
 				&&Entity.getManager().getEntity(loc.x, loc.y)==null) {
 			switch(id) {
@@ -270,6 +275,7 @@ public class Player extends GamePlayer{
 			hand.remove(selectedCard);
 			project.remove(handPics.get(selectedCard));
 			handPics.remove(selectedCard);
+			
 			selectedCard=-1;//setting the selected card back to nothing
 		}		
 	}
@@ -278,16 +284,10 @@ public class Player extends GamePlayer{
 		for(int i=hand.size()-1;i>=0;i--) {//i loop backwards so the cards on top will be checked first
 			//doing things if the card has been clicked so it can be played
 			if(handPics.get(i).isPressed()&&turnState==TurnState.IDLE) {
-				//making sure they have enough money to buy the robot and subtracting it
 				turnState=TurnState.BUYBOT;
-				//adding a highlight to the selected card and bringing it to the front
-				Rectangle selection = new Rectangle(40*FinalProject.PIXEL_SCALE,52*FinalProject.PIXEL_SCALE);
-				selection.setFill(Color.WHITE);
-				selection.setX(-1*FinalProject.PIXEL_SCALE);
-				selection.setY(-1*FinalProject.PIXEL_SCALE);
-				handPics.get(i).getChildren().add(selection);
-				selection.toBack();
-				handPics.get(i).toFront();
+				selecttionArrow.setVisible(true);
+				selecttionArrow.setY((i*35+27)*FinalProject.PIXEL_SCALE);
+				handPics.get(i).setTranslateX(17*FinalProject.PIXEL_SCALE);
 				//making sure we can tell what card they seleected outside of the loop
 				selectedCard=i;
 			}
