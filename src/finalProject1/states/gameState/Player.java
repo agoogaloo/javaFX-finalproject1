@@ -232,44 +232,46 @@ public class Player extends GamePlayer{
 				&&Entity.getManager().getEntity(loc.x, loc.y)==null) {
 			switch(id) {
 			case HeliBot.ID:
-				if(money>=HeliBot.COST) {
-					money-=HeliBot.COST;
-					new HeliBot(project, playerNum,loc.x,loc.y).endTurn();
-					break;//exiting the switch case so the other parts wont run
+				if(money<HeliBot.COST) {
+					return;//exiting the method so it doesnt try to place a robot if you dont have enough money
+					
 				} 
-				return;//exiting the method so it doesnt try to place a robot if you dont have enough money
+				money-=HeliBot.COST;
+				new HeliBot(project, playerNum,loc.x,loc.y).endTurn();
+				break;//exiting the switch case so the other parts wont run
+				
 			case Tank.ID:
-				if(money>=Tank.COST) {
-					money-=Tank.COST;
-					new Tank(project, playerNum,loc.x,loc.y).endTurn();
-					break;
+				if(money<Tank.COST) {
+					return;
 				}
-				return;
+				money-=Tank.COST;
+				new Tank(project, playerNum,loc.x,loc.y).endTurn();
+				break
+				;
 			case Turret.ID:
-				if(money>=Turret.COST) {
-					money-=Turret.COST;
-					new Turret(project, playerNum,loc.x,loc.y).endTurn();
-					break;
+				if(money<Turret.COST) {
+					return;
 				}
-				return;
+				money-=Turret.COST;
+				new Turret(project, playerNum,loc.x,loc.y).endTurn();
+				break;
 				
 			case TreadBot.ID:
-				if(money>=TreadBot.COST) {
-					money-=TreadBot.COST;
-					new TreadBot(project, playerNum,loc.x,loc.y).endTurn();
-					break;
+				if(money<TreadBot.COST) {
+					return;
 				}
-				return;
+				money-=TreadBot.COST;
+				new TreadBot(project, playerNum,loc.x,loc.y).endTurn();
+				break;
 			}
-		}
-		String seperator=String.valueOf(NetworkData.SEPERATOR);
-		dataToSend=NetworkData.BUYBOT+seperator+id+seperator+loc.x+seperator+loc.y;
-		turnState=TurnState.IDLE;
-		hand.remove(selectedCard);
-		project.remove(handPics.get(selectedCard));
-		handPics.remove(selectedCard);
-		selectedCard=-1;//setting the selected card back to nothing
-		
+			String seperator=String.valueOf(NetworkData.SEPERATOR);
+			dataToSend=NetworkData.BUYBOT+seperator+id+seperator+loc.x+seperator+loc.y;
+			turnState=TurnState.IDLE;
+			hand.remove(selectedCard);
+			project.remove(handPics.get(selectedCard));
+			handPics.remove(selectedCard);
+			selectedCard=-1;//setting the selected card back to nothing
+		}		
 	}
 	
 	private void selectCard() {
