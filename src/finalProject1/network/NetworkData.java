@@ -8,7 +8,8 @@ import java.net.Socket;
 public class NetworkData {
 	//these are seperators in the data that determine what the data that is given means
 	//this class does nothing with them but other classes do
-	public static final char SEPERATOR=',',ATTACK='A',MOVE='M',STARTTURN='S',ENDTURN='E',CARDS='C';
+	public static final char SEPERATOR=',',ATTACK='A',MOVE='M',
+			STARTTURN='S',ENDTURN='E',BUYCARD='B',BUYBOT='P';
 	DataInputStream inData;
 	DataOutputStream outData;
 

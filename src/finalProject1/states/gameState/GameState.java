@@ -54,7 +54,7 @@ public class GameState extends State{
 		this.project=project;
 		this.isStarting=isStarting;
 		opponentData=opponent;
-		player2=new Opponent(opponent, project);
+		
 		//setting the text font and colour
 		infoText.setFont(Assets.font);
 		infoText.setFill(Color.WHITE);
@@ -73,6 +73,7 @@ public class GameState extends State{
 		board = new Board(project);	//creating the board
 		//creating the players and making player 1 go 1st
 		player1=new Player(board, project);
+		player2=new Opponent(opponentData, project);
 	
 		if(isStarting) {
 			activePlayer=player1;

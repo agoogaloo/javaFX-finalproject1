@@ -42,7 +42,7 @@ public class ConnectionState extends State{
 			info.setText("tell your oponent to join "+InetAddress.getLocalHost().getHostAddress());				
 		}else {
 			isServer=false;
-			socketGetter=new SocketGetter(ip);
+			socketGetter=new SocketGetter("192.168.1.73");
 			info.setText("connecting to "+ip);	
 		}
 		socketGetter.start();

@@ -63,27 +63,41 @@ public class Player extends GamePlayer{
 		turnText.setFont(Assets.boldfont);
 		turnText.setFill(Color.WHITE);
 		
+		
+		
 		project.add(turnText);
 		project.add(endTurn);
-		project.add(buyCard);
+		project.add(buyCard);		
+		
+		money+=2;
+		buyCard();
+		buyCard();
+		
+		
+		
 		
 	}
 	
 	@Override
 	public void update() {
 		Point mouseLoc=Board.PixelsToTiles(Inputs.getX(), Inputs.getY());
-		
+		//updating the textboxen
 		if(doneTurn) {
 			turnText.setVisible(true);
 		}else {
 			turnText.setVisible(false);
 		}
+		moneyText.setText("$"+money);
 		
 		if(Inputs.isClicked()&&!doneTurn) {
 			onClick(mouseLoc);
 		}
 		
-		
+		//correcting the vertical position of the cards
+		for(int i=hand.size()-1;i>=0;i--) {//i loop backwards so the cards on top will be checked first		
+			//setting the card to be in the right place case other cards have been played
+			handPics.get(i).setTranslateY((i*35+12)*FinalProject.PIXEL_SCALE);
+		}
 		if(turnState==TurnState.ROBOTSELECT) {
 			highlightSelection();
 		}
@@ -92,12 +106,12 @@ public class Player extends GamePlayer{
 	
 	private void onClick(Point mouseLoc) {
 		if(turnState==TurnState.BUYBOT) {
-			//buyBots(mouseLoc);
-			//you shouldnt be able to do anything else in the buybot state because it could 
-			//mess things up so we exit the method
+			buyBot(mouseLoc,hand.get(selectedCard));
+			//making sure you cant do anytihng other than place a card so you dont mess up 
+			//the card selection
 			return;
 		}
-		//doing thins if a robot has been selected to move/attack
+		//doing things if a robot has been selected to move/attack
 		if(turnState==TurnState.ROBOTSELECT) {
 			turnState=TurnState.IDLE;
 			//moving the robot if the robot is able to move
@@ -126,21 +140,26 @@ public class Player extends GamePlayer{
 		}
 		//buying a card if they have clicked on the buy a card button
 		if(buyCard.isPressed()) {
-			buyCard(deck.get(ThreadLocalRandom.current().nextInt(0, deck.size())));
+			buyCard();
 		}
 		if(endTurn.isPressed()) {
 			doneTurn=true;
 			dataToSend=NetworkData.ENDTURN+"";
 		}
+		selectCard();
 	}
-	public void buyCard(int id) {
+	public void buyCard() {
 		int cardCost=1;//it costs $1 to buy a card
+		int id=deck.get(ThreadLocalRandom.current().nextInt(0, deck.size()));
 		//exiting the method if they cant afford it
 		if(money<cardCost) {
 			return;
 		}
 		//adding the card to their hand
 		hand.add(id);
+		//taking away the cost of the card
+		money-=cardCost;
+		dataToSend=NetworkData.BUYCARD+"";
 		
 		//this part creates the card out of a few  pictures and textboxes
 		Group card = new Group();//the card to be added
@@ -196,45 +215,61 @@ public class Player extends GamePlayer{
 		handPics.add(card);
 		project.add(card);
 
-		//taking away the cost of the card
-		money-=cardCost;
+		
+	}
+	
+	private void buyBot(Point loc, int id) {
+		
+		if(loc.x>=0&&loc.y>=0&&loc.x<=1&&loc.y<Board.HEIGHT
+				&&Entity.getManager().getEntity(loc.x, loc.y)==null) {
+			switch(id) {
+			case HeliBot.ID:
+				if(money>=HeliBot.COST) {
+					money-=HeliBot.COST;
+					new HeliBot(project, playerNum,loc.x,loc.y).endTurn();
+					break;//exiting the switch case so the other parts wont run
+				} 
+				return;//exiting the method so it doesnt try to place a robot if you dont have enough money
+			case Tank.ID:
+				if(money>=Tank.COST) {
+					money-=Tank.COST;
+					new Tank(project, playerNum,loc.x,loc.y).endTurn();
+					break;
+				}
+				return;
+			case Turret.ID:
+				if(money>=Turret.COST) {
+					money-=Turret.COST;
+					new Turret(project, playerNum,loc.x,loc.y).endTurn();
+					break;
+				}
+				return;
+				
+			case TreadBot.ID:
+				if(money>=TreadBot.COST) {
+					money-=TreadBot.COST;
+					new TreadBot(project, playerNum,loc.x,loc.y).endTurn();
+					break;
+				}
+				return;
+			}
+		}
+		String seperator=String.valueOf(NetworkData.SEPERATOR);
+		dataToSend=NetworkData.BUYBOT+seperator+id+seperator+loc.x+seperator+loc.y;
+		turnState=TurnState.IDLE;
+		hand.remove(selectedCard);
+		project.remove(handPics.get(selectedCard));
+		handPics.remove(selectedCard);
+		selectedCard=-1;//setting the selected card back to nothing
+		
 	}
 	
 	private void selectCard() {
 		for(int i=hand.size()-1;i>=0;i--) {//i loop backwards so the cards on top will be checked first
-			
-			//setting the card to be in the right place case other cards have been played
-			handPics.get(i).setTranslateY((i*35+12)*FinalProject.PIXEL_SCALE);
 			//doing things if the card has been clicked so it can be played
 			if(handPics.get(i).isPressed()&&turnState==TurnState.IDLE) {
 				//making sure they have enough money to buy the robot and subtracting it
-				switch(hand.get(i)) {
-				case HeliBot.ID:
-					if(money>=HeliBot.COST) {
-						money-=HeliBot.COST;
-						break;//exiting the switch case so the other parts wont run
-					} 
-					return;//exiting the method so it doesnt try to place a robot if you dont have enough money
-				case Tank.ID:
-					if(money>=Tank.COST) {
-						money-=Tank.COST;
-						break;
-					}
-					return;
-				case Turret.ID:
-					if(money>=Turret.COST) {
-						money-=Turret.COST;
-						break;
-					}
-					return;
-					
-				case TreadBot.ID:
-					if(money>=TreadBot.COST) {
-						money-=TreadBot.COST;
-						break;
-					}
-					return;
-				}
+				turnState=TurnState.BUYBOT;
 				//adding a highlight to the selected card and bringing it to the front
 				Rectangle selection = new Rectangle(40*FinalProject.PIXEL_SCALE,52*FinalProject.PIXEL_SCALE);
 				selection.setFill(Color.WHITE);
@@ -248,6 +283,7 @@ public class Player extends GamePlayer{
 			}
 		}
 	}
+	
 	private void highlightSelection() {
 		//showing that the robot has been selected by changing its tile
 		board.selectTile(selectedBot.getX(),selectedBot.getY());

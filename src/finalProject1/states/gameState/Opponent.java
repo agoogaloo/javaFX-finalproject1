@@ -5,15 +5,23 @@ import java.util.ArrayList;
 import finalProject1.Assets;
 import finalProject1.FinalProject;
 import finalProject1.entities.Entity;
+import finalProject1.entities.robots.HeliBot;
 import finalProject1.entities.robots.Robot;
+import finalProject1.entities.robots.Tank;
+import finalProject1.entities.robots.TreadBot;
+import finalProject1.entities.robots.Turret;
 import finalProject1.network.NetworkData;
+import javafx.scene.Group;
 import javafx.scene.image.ImageView;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 
 public class Opponent extends GamePlayer{
 	private NetworkData data;
 	
-	private int cards=2;
+	private int cards=1;
 	private ArrayList<ImageView> handPics = new ArrayList<>();//the pictures of the cards
+	private Group hand=new Group();
 	
 	
 	
@@ -21,6 +29,10 @@ public class Opponent extends GamePlayer{
 		super(project);
 		playerNum=2;
 		this.data=data;
+		moneyText.setX(245*FinalProject.PIXEL_SCALE);
+	
+		money+=1;
+		project.add(hand);
 	}
 
 	@Override
@@ -30,12 +42,16 @@ public class Opponent extends GamePlayer{
 	}
 	@Override
 	public void update() {
+		moneyText.setText("$"+money);
 		if(handPics.size()!=cards) {
+			System.out.println("changing cards in opponents hand they should have "+cards);
 			handPics.clear();
+			hand.getChildren().clear();
 			for(int i=0;i<cards;i++) {
 				handPics.add(new ImageView(Assets.cardBack));
 				handPics.get(i).setX(402*FinalProject.PIXEL_SCALE);
 				handPics.get(i).setY((i*35+12)*FinalProject.PIXEL_SCALE);
+				hand.getChildren().add(handPics.get(i));
 				
 			}
 		}
@@ -46,10 +62,11 @@ public class Opponent extends GamePlayer{
 		if(moves[0].length()==0) {
 			return;
 		}
-		System.out.println("");
+		
 		for(String i:moves) {
 			System.out.print(i+", ");
 		}
+		System.out.println("");
 		
 		
 		switch (moves[0].charAt(0)) {
@@ -61,8 +78,45 @@ public class Opponent extends GamePlayer{
 			doneTurn=true;
 			break;	
 			
-		case NetworkData.CARDS:
-			cards= Integer.parseInt(moves[1]);
+		case NetworkData.BUYCARD:
+			cards++;
+			money-=1;
+			break;
+			
+		case NetworkData.BUYBOT:
+			cards--;
+			int x=Integer.parseInt(moves[2]),y=Integer.parseInt(moves[3]);
+			x=x*-1+6;//the opponents board is mirrored so the x coordinate should be flipped
+			switch(Integer.parseInt(moves[1])) {
+			case HeliBot.ID:
+				
+				money-=HeliBot.COST;
+				new HeliBot(project, playerNum,x,y).endTurn();
+				break;//exiting the switch case so the other parts wont run
+		
+				
+			case Tank.ID:
+				if(money>=Tank.COST) {
+					money-=Tank.COST;
+					new Tank(project, playerNum,x,y).endTurn();
+					break;
+				}
+				return;
+			case Turret.ID:
+				if(money>=Turret.COST) {
+					money-=Turret.COST;
+					new Turret(project, playerNum,x,y).endTurn();
+					break;
+				}
+				return;
+				
+			case TreadBot.ID:
+				if(money>=TreadBot.COST) {
+					money-=TreadBot.COST;
+					new TreadBot(project, playerNum,x,y).endTurn();
+					break;
+				}
+			}
 			break;
 			
 		case NetworkData.ATTACK:
