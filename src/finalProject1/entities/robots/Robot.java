@@ -60,7 +60,7 @@ public abstract class Robot extends Entity{
 	 * this lets robots move to a selected tile
 	 * @param x - the x coodrdinate in tiles
 	 * @param y - the y coordinate in tiles
-	 * @return - whether the robot was able to move ther or not
+	 * @return - whether the robot was able to move there or not
 	 */
 	public boolean move(int x, int y) {
 		//checking if it is able to move there

@@ -36,6 +36,9 @@ public class NetworkData {
 	}
 	
 	public void sendData(String data) {
+		if(data.length()>0) {
+			System.out.println("sent"+data);
+		}
 		try {
 			outData.writeUTF(data);
 		} catch (IOException e) {

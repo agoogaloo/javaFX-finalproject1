@@ -111,6 +111,10 @@ public class GameState extends State{
 					if(i instanceof Robot)
 						((Robot) i).startTurn();
 				}
+				for(Entity i:Entity.getManager().getEntities(1)) {
+					if(i instanceof Robot)
+						((Robot) i).endTurn();
+				}
 				opponentData.sendData(NetworkData.ENDTURN+"");
 				activePlayer=player2;
 			}else if(activePlayer instanceof Opponent) {
@@ -118,6 +122,10 @@ public class GameState extends State{
 				for(Entity i:Entity.getManager().getEntities(1)) {
 					if(i instanceof Robot)
 						((Robot) i).startTurn();
+				}
+				for(Entity i:Entity.getManager().getEntities(2)) {
+					if(i instanceof Robot)
+						((Robot) i).endTurn();
 				}
 				opponentData.sendData(NetworkData.STARTTURN+"");
 				activePlayer=player1;

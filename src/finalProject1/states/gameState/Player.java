@@ -113,32 +113,33 @@ public class Player extends GamePlayer{
 		}
 		//doing things if a robot has been selected to move/attack
 		if(turnState==TurnState.ROBOTSELECT) {
+			System.out.println("doing things");
 			turnState=TurnState.IDLE;
 			//moving the robot if the robot is able to move
 			if(selectedBot.canMove()) {
+				String seperator=String.valueOf(NetworkData.SEPERATOR);
+				dataToSend=NetworkData.MOVE+seperator+selectedBot.getX()
+				+seperator+selectedBot.getY()+seperator+mouseLoc.x+seperator+mouseLoc.y;
 				if(!selectedBot.move(mouseLoc.x, mouseLoc.y)) {
-					//unselecting the robot if they select someplace that they cant move
-					String seperator=String.valueOf(NetworkData.SEPERATOR);
-					dataToSend=NetworkData.MOVE+seperator+selectedBot.getX()
-					+seperator+selectedBot.getY()+seperator+mouseLoc.x+seperator+mouseLoc.y;
-					selectedBot=null;
-					selectedBot=null;
+					dataToSend="";
+					
+					
 										
 				}
 			//attacking if the robot has already moved and can still attack
 			}else if (selectedBot.canAttack()) {
+				String seperator=String.valueOf(NetworkData.SEPERATOR);
+				dataToSend=NetworkData.ATTACK+seperator+selectedBot.getX()
+				+seperator+selectedBot.getY()+seperator+mouseLoc.x+seperator+mouseLoc.y;
 				if(!selectedBot.attack(mouseLoc.x, mouseLoc.y)) {
-					String seperator=String.valueOf(NetworkData.SEPERATOR);
-					dataToSend=NetworkData.ATTACK+seperator+selectedBot.getX()
-					+seperator+selectedBot.getY()+seperator+mouseLoc.x+seperator+mouseLoc.y;
-					selectedBot=null;
-					turnState=TurnState.IDLE;
+					dataToSend="";
+					
+					
 				}
-			//unslecting the robot if it has already moved and attacked
-			}else { 
-				selectedBot=null;
-				turnState=TurnState.IDLE;	
 			}
+			selectedBot=null;
+			turnState=TurnState.IDLE;	
+			
 		//if a robot isnt selected and they click on a robot, is should be selected
 		}else if(Entity.getManager().getEntity(mouseLoc.x, mouseLoc.y) instanceof Robot) {
 			//selecting the robot
@@ -310,9 +311,7 @@ public class Player extends GamePlayer{
 	public String getDataToSend() {
 		String value=dataToSend;
 		dataToSend="";
-		if(value.length()>0) {
-			System.out.println("sent"+value);
-		}
+		
 		return value;
 	}
 
