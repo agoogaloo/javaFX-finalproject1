@@ -26,11 +26,14 @@ public abstract class GamePlayer {
 	
 	
 	public void startTurn() {
+		System.out.println(playerNum+"starting");
 		doneTurn=false;
-		//money+=2;
 	}
 	public int getMoney() {
 		return money;
+	}
+	public void giveMoney(int amount) {
+		money+=amount;
 	}
 	public boolean isDoneTurn() {
 		return doneTurn;

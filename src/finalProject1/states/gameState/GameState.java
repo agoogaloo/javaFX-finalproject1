@@ -102,14 +102,27 @@ public class GameState extends State{
 		
 		sendData();
 		if(activePlayer.isDoneTurn()) {
-			if(player2.isDoneTurn()) {
+			System.out.println("player 1:"+player1.isDoneTurn()+"player2:"+player2.isDoneTurn());
+			player1.giveMoney(1);
+			player2.giveMoney(1);
+			if(activePlayer instanceof Player) {
+				player2.startTurn();
+				for(Entity i:Entity.getManager().getEntities(2)) {
+					if(i instanceof Robot)
+						((Robot) i).startTurn();
+				}
+				opponentData.sendData(NetworkData.ENDTURN+"");
+				activePlayer=player2;
+			}else if(activePlayer instanceof Opponent) {
 				player1.startTurn();
+				for(Entity i:Entity.getManager().getEntities(1)) {
+					if(i instanceof Robot)
+						((Robot) i).startTurn();
+				}
+				opponentData.sendData(NetworkData.STARTTURN+"");
 				activePlayer=player1;
 			}
-			if(player1.isDoneTurn()) {
-				player2.startTurn();
-				activePlayer=player2;
-			}
+			
 		}
 			
 		

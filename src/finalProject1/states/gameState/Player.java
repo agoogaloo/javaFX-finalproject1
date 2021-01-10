@@ -118,12 +118,19 @@ public class Player extends GamePlayer{
 			if(selectedBot.canMove()) {
 				if(!selectedBot.move(mouseLoc.x, mouseLoc.y)) {
 					//unselecting the robot if they select someplace that they cant move
+					String seperator=String.valueOf(NetworkData.SEPERATOR);
+					dataToSend=NetworkData.MOVE+seperator+selectedBot.getX()
+					+seperator+selectedBot.getY()+seperator+mouseLoc.x+seperator+mouseLoc.y;
+					selectedBot=null;
 					selectedBot=null;
 										
 				}
 			//attacking if the robot has already moved and can still attack
 			}else if (selectedBot.canAttack()) {
 				if(!selectedBot.attack(mouseLoc.x, mouseLoc.y)) {
+					String seperator=String.valueOf(NetworkData.SEPERATOR);
+					dataToSend=NetworkData.ATTACK+seperator+selectedBot.getX()
+					+seperator+selectedBot.getY()+seperator+mouseLoc.x+seperator+mouseLoc.y;
 					selectedBot=null;
 					turnState=TurnState.IDLE;
 				}
@@ -144,7 +151,7 @@ public class Player extends GamePlayer{
 		}
 		if(endTurn.isPressed()) {
 			doneTurn=true;
-			dataToSend=NetworkData.ENDTURN+"";
+			//dataToSend=NetworkData.ENDTURN+"";
 		}
 		selectCard();
 	}

@@ -13,8 +13,6 @@ import finalProject1.entities.robots.Turret;
 import finalProject1.network.NetworkData;
 import javafx.scene.Group;
 import javafx.scene.image.ImageView;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
 
 public class Opponent extends GamePlayer{
 	private NetworkData data;
@@ -38,7 +36,8 @@ public class Opponent extends GamePlayer{
 	@Override
 	public void startTurn() {
 		super.startTurn();
-		data.sendData(NetworkData.STARTTURN+"");
+		System.out.println("opponent starting");
+		//data.sendData(NetworkData.STARTTURN+"");
 	}
 	@Override
 	public void update() {
@@ -71,11 +70,14 @@ public class Opponent extends GamePlayer{
 		
 		switch (moves[0].charAt(0)) {
 		case NetworkData.STARTTURN:
+			//startTurn();
+			System.out.println("op start");
 			doneTurn=false;
 			break;	
 			
 		case NetworkData.ENDTURN:
 			doneTurn=true;
+			System.out.println("op: end");
 			break;	
 			
 		case NetworkData.BUYCARD:
@@ -116,19 +118,14 @@ public class Opponent extends GamePlayer{
 					new TreadBot(project, playerNum,x,y).endTurn();
 					break;
 				}
+				return;
 			}
 			break;
 			
 		case NetworkData.ATTACK:
 			int[]attack=new int[4];
 			for(int i=0;i<=4;i++) {
-				try {
-					attack[i] = Integer.parseInt(moves[i+1]);
-				} catch (NumberFormatException e) {
-					System.out.println("the opponent's data didnt send a number after their attack"
-							+ "something has gone wrong");
-					return;
-				}
+				attack[i] = Integer.parseInt(moves[i+1]);
 			}
 			attackBot(attack);
 			break;
@@ -136,13 +133,7 @@ public class Opponent extends GamePlayer{
 		case NetworkData.MOVE:
 			int[]move=new int[4];
 			for(int i=0;i<=4;i++) {
-				try {
-					move[i] = Integer.parseInt(moves[i+1]);
-				} catch (NumberFormatException e) {
-					System.out.println("the opponent's data didnt send a number after their move"
-							+ "something has gone wrong");
-					return;
-				}
+				move[i] = Integer.parseInt(moves[i+1]);
 			}
 			moveBot(move);
 			break;
@@ -150,14 +141,17 @@ public class Opponent extends GamePlayer{
 	}
 	
 	private void moveBot(int[] moveData) {
+		//moving opponents robots
 		if(Entity.getManager().getEntity(moveData[0], moveData[1]) instanceof Robot) {
-			((Robot) Entity.getManager().getEntity(moveData[0], moveData[1])).move(moveData[2],moveData[3]);
+			((Robot) Entity.getManager().getEntity(moveData[0]*-1+6, moveData[1])).move(moveData[2]*-1+6,moveData[3]);
 		}
 		
 	}
 	private void attackBot(int[] attackData) {
+		//opponent is attacking
 		if(Entity.getManager().getEntity(attackData[0], attackData[1]) instanceof Robot) {
-			((Robot) Entity.getManager().getEntity(attackData[0], attackData[1])).attack(attackData[2],attackData[3]);
+			((Robot) Entity.getManager().getEntity(attackData[0]*-1+6, attackData[1]))
+			.attack(attackData[2]*-1+6,attackData[3]);
 		}
 		
 	}
