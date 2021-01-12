@@ -22,8 +22,8 @@ public class Assets {
 	public static final Image tile = new Image("res/tile.png",(Board.TILE_WIDTH+1)*FinalProject.PIXEL_SCALE,0,true,false);
 	public static final Image tileSelect = new Image("res/tileSelect.png",(Board.TILE_WIDTH+1)*FinalProject.PIXEL_SCALE,0,true,false);
 	public static final Image tileHighlight = new Image("res/tileHighlight.png",(Board.TILE_WIDTH+1)*FinalProject.PIXEL_SCALE,0,true,false);
-	public static final Font boldfont = loadFont("src/res/boldfont.ttf");
-	public static final Font font = loadFont("src/res/font.ttf");
+	public static final Font boldfont = loadFont("/res/boldfont.ttf");
+	public static final Font font = loadFont("/res/font.ttf");
 	public static final Image cardBack= new Image("res/card back.png",38*FinalProject.PIXEL_SCALE,0,true,false);
 	public static final Image cardFront= new Image("res/card front.png",38*FinalProject.PIXEL_SCALE,0,true,false);
 	public static final Image deck= new Image("res/deck.png",33*FinalProject.PIXEL_SCALE,0,true,false);
@@ -37,14 +37,11 @@ public class Assets {
 	 */
 	private static Font loadFont(String path) {
 		
-		try {//trying to load the font
-			return Font.loadFont(new FileInputStream(new File(path)),48);
-		} catch (FileNotFoundException e) {//saying it couldnt find the font if it couldnt find the font
-			System.out.println("couldnt find a font at '"+path+"'");
-			e.printStackTrace();
-		}
+	
+			return Font.loadFont(Assets.class.getClass().getResourceAsStream(path),48);
+		
 		//returning null if it wasnt able to return the font
-		return null;
+		
 	}
 	
 }
