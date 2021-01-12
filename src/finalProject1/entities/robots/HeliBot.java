@@ -17,7 +17,7 @@ public class HeliBot extends Robot{
 		health=MAXHEALTH;
 		speed=5;
 		damage=9;
-		range=9;
+		range=1;
 		
 	}
 	

@@ -65,5 +65,9 @@ public class EntityManager {
 	public ArrayList<Entity> getPlayer2() {
 		return player2;
 	}
+	public void reset() {
+		player1.clear();
+		player2.clear();
+	}
 
 }

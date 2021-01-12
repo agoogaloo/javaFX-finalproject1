@@ -31,6 +31,7 @@ public class Player extends GamePlayer{
 	private String dataToSend="";
 	
 	private Text turnText = new Text(120*FinalProject.PIXEL_SCALE,150*FinalProject.PIXEL_SCALE,"WAITING FOR YOUR OPPONENT");
+	private Text infoText = new Text(113*FinalProject.PIXEL_SCALE,230*FinalProject.PIXEL_SCALE,"");
 	
 	private ArrayList<Integer> deck = new ArrayList<>(Arrays.asList(Tank.ID,HeliBot.ID, TreadBot.ID, Turret.ID));
 	
@@ -66,10 +67,15 @@ public class Player extends GamePlayer{
 		
 		turnText.setFont(Assets.boldfont);
 		turnText.setFill(Color.WHITE);
+		turnText.toFront();
 		
+		
+		infoText.setFont(Assets.font);
+		infoText.setFill(Color.WHITE);
 		
 		
 		project.add(turnText);
+		project.add(infoText);
 		project.add(endTurn);
 		project.add(buyCard);
 		project.add(selecttionArrow);
@@ -87,11 +93,13 @@ public class Player extends GamePlayer{
 	public void update() {
 		Point mouseLoc=Board.PixelsToTiles(Inputs.getX(), Inputs.getY());
 		//updating the textboxen
+		
 		if(doneTurn) {
 			turnText.setVisible(true);
 		}else {
 			turnText.setVisible(false);
 		}
+		showInfo(mouseLoc);
 		moneyText.setText("$"+money);
 		
 		if(Inputs.isClicked()&&!doneTurn) {
@@ -286,7 +294,7 @@ public class Player extends GamePlayer{
 			if(handPics.get(i).isPressed()&&turnState==TurnState.IDLE) {
 				turnState=TurnState.BUYBOT;
 				selecttionArrow.setVisible(true);
-				selecttionArrow.setY((i*35+27)*FinalProject.PIXEL_SCALE);
+				selecttionArrow.setY((i*35+12+22)*FinalProject.PIXEL_SCALE);
 				handPics.get(i).setTranslateX(17*FinalProject.PIXEL_SCALE);
 				//making sure we can tell what card they seleected outside of the loop
 				selectedCard=i;
@@ -310,11 +318,23 @@ public class Player extends GamePlayer{
 		}
 	}
 	
+	private void showInfo(Point mouseLoc) {
+		Entity e=Entity.getManager().getEntity(mouseLoc.x, mouseLoc.y);
+		endTurn.setVisible(false);
+		if(e!=null) {
+			infoText.setText(e.getDescription().toUpperCase());
+		}else if(buyCard.isHover()) {
+			infoText.setText("buy a card for $1");
+		}else {
+			endTurn.setVisible(true);
+			infoText.setText("");
+		}
+		
+	}
 	public String getDataToSend() {
 		String value=dataToSend;
 		dataToSend="";
 		
 		return value;
 	}
-
 }

@@ -38,7 +38,7 @@ public class GameState extends State{
 	private Board board;//the board that the game is played on
 	
 	//ui stuff
-	private Text infoText = new Text(113*FinalProject.PIXEL_SCALE,230*FinalProject.PIXEL_SCALE,"");
+	
 	
 	private boolean isStarting;
 	
@@ -55,9 +55,7 @@ public class GameState extends State{
 		this.isStarting=isStarting;
 		opponentData=opponent;
 		
-		//setting the text font and colour
-		infoText.setFont(Assets.font);
-		infoText.setFill(Color.WHITE);
+		
 		
 		
 		//the text for the end turn button
@@ -81,6 +79,7 @@ public class GameState extends State{
 			activePlayer=player2;
 		}
 		activePlayer.startTurn();
+		Entity.getManager().reset();
 		
 		
 		//creating the towers the players need to protect
@@ -88,9 +87,6 @@ public class GameState extends State{
 		new Tower(project, 1, 0, 6);
 		new Tower(project, 2, 6, 0);
 		new Tower(project, 2, 6, 6);
-		
-		project.add(infoText);
-		
 	}
 	
 	/**
@@ -138,9 +134,6 @@ public class GameState extends State{
 		//highlighting the tile that is being hovered and showing information about anything on it
 		board.reset();//reseting the board so tiles wont stay highlighted
 		board.highlightTile(mouseLoc.x, mouseLoc.y);//highlighting
-		//showing the entities info if there is one on that tile
-		showInfo(Entity.getManager().getEntity(mouseLoc.x,mouseLoc.y));
-		
 		
 		//checking if player 1's towers are still there and showing the win screen if they arent
 		boolean hasTowers=false;
@@ -186,17 +179,6 @@ public class GameState extends State{
 		String data=player1.getDataToSend();
 		if(data.length()>0) {
 			opponentData.sendData(data);
-		}
-	}
-	
-	//this shows the info for the entity that is being hovered over
-	private void showInfo(Entity e) {
-		if(e!=null) {
-			infoText.setText(e.getDescription().toUpperCase());
-			//endTurn.setVisible(false);
-		}else {
-			infoText.setText("");
-			//endTurn.setVisible(true);
 		}
 	}
 	
