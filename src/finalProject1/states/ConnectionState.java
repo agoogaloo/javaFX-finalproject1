@@ -29,7 +29,7 @@ public class ConnectionState extends State{
 	private String ip;
 	private SocketGetter socketGetter;
 	//Socket opponentSocket;
-	private NetworkData oponent;
+	private NetworkData opponent;
 	
 	public ConnectionState(FinalProject project, String ip) throws IOException {
 		this.project=project;
@@ -79,25 +79,24 @@ public class ConnectionState extends State{
 	
 	@Override
 	public void update() {
-		if(socketGetter.hasSocket()) {
+		if(socketGetter.hasSocket()&&opponent==null) {
 			
-			oponent=new NetworkData(socketGetter.getSocket(),ip);
-		
+			opponent=new NetworkData(socketGetter.getSocket(),ip);
 			info.setText("connected to "+socketGetter.getSocket().getInetAddress().getHostName());
 		}
 		
-		if(oponent!=null&&startButton.isPressed()) {
-			oponent.sendData("ready");
+		if(opponent!=null&&startButton.isPressed()) {
+			opponent.sendData("ready");
 			ready=true;
-			info.setText("waiting for opponent to get ready");
+			info.setText("ready and waiting for opponent start");
 		}
-		if(oponent!=null&&oponent.getData().equals("ready")) {
-			info.setText("your opponent is ready");
+		if(opponent!=null&&opponent.getData().equals("ready")) {
+			info.setText("your opponent is ready to start");
 			opponentReady=true;
 		}
 		
 		if(ready&&opponentReady) {
-			setCurrentState(new GameState(project, oponent,isServer));
+			setCurrentState(new GameState(project, opponent,isServer));
 		}
 	}
 
