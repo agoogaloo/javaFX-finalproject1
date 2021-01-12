@@ -12,8 +12,12 @@ public class NetworkData {
 			STARTTURN='S',ENDTURN='E',BUYCARD='B',BUYBOT='P';
 	DataInputStream inData;
 	DataOutputStream outData;
+	Socket socket;
+	private String ip;
 
-	public NetworkData(Socket socket) {
+	public NetworkData(Socket socket, String ip) {
+		this.ip =ip;
+		this.socket=socket;
 		try {
 			inData = new DataInputStream(socket.getInputStream());
 			outData = new DataOutputStream(socket.getOutputStream());
@@ -23,6 +27,10 @@ public class NetworkData {
 		}
 	}
 
+	public String getIp() {
+		return ip;
+	}
+	
 	public String getData() {
 		try {
 			if(inData.available()>0) {
@@ -43,8 +51,16 @@ public class NetworkData {
 			outData.writeUTF(data);
 		} catch (IOException e) {
 			System.out.println("couldn't send information to the opponent");
+		}		
+	}
+	
+	public void close() {
+		try {
+			socket.close();
+			inData.close();
+			outData.close();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
-		
-		
 	}
 }

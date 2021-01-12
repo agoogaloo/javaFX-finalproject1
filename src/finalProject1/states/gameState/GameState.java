@@ -40,7 +40,7 @@ public class GameState extends State{
 	//ui stuff
 	
 	
-	private boolean isStarting;
+	private boolean isServer;
 	
 	//this is added to the end turn button so that when it is clicked it goes to the next turn
 	
@@ -49,10 +49,10 @@ public class GameState extends State{
 	 * this is the state the game is in when it is actually being played.
 	 * @param project - the project or main class that this gamestate belongs to.
 	 */
-	public GameState(FinalProject project, NetworkData opponent, boolean isStarting) {
-		System.out.println("starting:"+isStarting);
+	public GameState(FinalProject project, NetworkData opponent, boolean isServer) {
+		System.out.println("starting:"+isServer);
 		this.project=project;
-		this.isStarting=isStarting;
+		this.isServer=isServer;
 		opponentData=opponent;
 		
 		
@@ -73,7 +73,7 @@ public class GameState extends State{
 		player1=new Player(board, project);
 		player2=new Opponent(opponentData, project);
 	
-		if(isStarting) {
+		if(isServer) {
 			activePlayer=player1;
 		}else {
 			activePlayer=player2;
@@ -147,7 +147,7 @@ public class GameState extends State{
 		if(!hasTowers) {
 			//do player 2 winning things
 			//infoText.setText("player 2 wins");
-			State.setCurrentState(new GameEnd(project,2));
+			State.setCurrentState(new GameEnd(project,opponentData,false));
 		}
 		//checking player 2s towers
 		hasTowers=false;
@@ -160,7 +160,7 @@ public class GameState extends State{
 		if(!hasTowers) {
 			//do player 1 winning things
 			//infoText.setText("player 1 wins");
-			State.setCurrentState(new GameEnd(project,1));
+			State.setCurrentState(new GameEnd(project,opponentData,true));
 		}
 		//updating the entities
 		Entity.getManager().update();

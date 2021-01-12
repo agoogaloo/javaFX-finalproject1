@@ -33,7 +33,7 @@ public class ConnectionState extends State{
 	
 	public ConnectionState(FinalProject project, String ip) throws IOException {
 		this.project=project;
-		
+		this.ip=ip;
 		if(ip.equals("server")) {
 			//do server making things
 			isServer=true;
@@ -80,7 +80,9 @@ public class ConnectionState extends State{
 	@Override
 	public void update() {
 		if(socketGetter.hasSocket()) {
-			oponent=new NetworkData(socketGetter.getSocket());
+			
+			oponent=new NetworkData(socketGetter.getSocket(),ip);
+		
 			info.setText("connected to "+socketGetter.getSocket().getInetAddress().getHostName());
 		}
 		

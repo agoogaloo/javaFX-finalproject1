@@ -184,7 +184,7 @@ public class OldGameState extends State{
 		if(!hasTowers) {
 			//do player 2 winning things
 			turnText.setText("player 2 wins");
-			State.setCurrentState(new GameEnd(project,2));
+			//State.setCurrentState(new GameEnd(project));
 		}
 		//checking player 2s towers
 		hasTowers=false;
@@ -197,7 +197,7 @@ public class OldGameState extends State{
 		if(!hasTowers) {
 			//do player 1 winning things
 			turnText.setText("player 1 wins");
-			State.setCurrentState(new GameEnd(project,1));
+			//State.setCurrentState(new GameEnd(project,1));
 		}
 		//updating the entities
 		Entity.getManager().update();
