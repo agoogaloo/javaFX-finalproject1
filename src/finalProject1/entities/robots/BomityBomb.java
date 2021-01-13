@@ -9,7 +9,7 @@ import finalProject1.board.Board;
 import javafx.scene.image.ImageView;
 
 public class BomityBomb extends Robot{
-	public static final int ID=5, MAXHEALTH=1, COST=2;
+	public static final int ID=5, MAXHEALTH=1, COST=3;
 	
 	public BomityBomb(FinalProject project,int player) {
 		this(project,player, 0, 0);
