@@ -10,6 +10,7 @@ import finalProject1.FinalProject;
 import finalProject1.Inputs;
 import finalProject1.board.Board;
 import finalProject1.entities.Entity;
+import finalProject1.entities.robots.BomityBomb;
 import finalProject1.entities.robots.HeliBot;
 import finalProject1.entities.robots.Robot;
 import finalProject1.entities.robots.Tank;
@@ -33,7 +34,8 @@ public class Player extends GamePlayer{
 	private Text turnText = new Text(120*FinalProject.PIXEL_SCALE,150*FinalProject.PIXEL_SCALE,"WAITING FOR YOUR OPPONENT");
 	private Text infoText = new Text(113*FinalProject.PIXEL_SCALE,230*FinalProject.PIXEL_SCALE,"");
 	
-	private ArrayList<Integer> deck = new ArrayList<>(Arrays.asList(Tank.ID,HeliBot.ID, TreadBot.ID, Turret.ID));
+	private ArrayList<Integer> deck = new ArrayList<>(Arrays.asList(Tank.ID,HeliBot.ID, TreadBot.ID, 
+			Turret.ID,BomityBomb.ID));
 	
 	private ArrayList<Integer> hand = new ArrayList<>();//the id of the robots in their hand
 	private ArrayList<Group> handPics = new ArrayList<>();//the pictures of the cards
@@ -212,6 +214,10 @@ public class Player extends GamePlayer{
 			info.setText("$ "+HeliBot.COST+" HP:"+HeliBot.MAXHEALTH);
 			robotPic=new ImageView(Assets.heliBot);
 			break;
+		case BomityBomb.ID:
+			info.setText("$ "+BomityBomb.COST+" HP:"+BomityBomb.MAXHEALTH);
+			robotPic=new ImageView(Assets.bomb);
+			break;
 		case TreadBot.ID:
 			info.setText("$"+TreadBot.COST+" HP:"+TreadBot.MAXHEALTH);
 			robotPic=new ImageView(Assets.treadBot);
@@ -252,7 +258,15 @@ public class Player extends GamePlayer{
 				money-=HeliBot.COST;
 				new HeliBot(project, playerNum,loc.x,loc.y).endTurn();
 				break;//exiting the switch case so the other parts wont run
-				
+			case BomityBomb.ID:
+				if(money<BomityBomb.COST) {
+					return;//exiting the method so it doesnt try to place a robot if you dont have enough money
+					
+				} 
+				money-=BomityBomb.COST;
+				new BomityBomb(project, playerNum,loc.x,loc.y).startTurn();
+				break;//exiting the switch case so the other parts wont run
+					
 			case Tank.ID:
 				if(money<Tank.COST) {
 					return;

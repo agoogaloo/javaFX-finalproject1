@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import finalProject1.Assets;
 import finalProject1.FinalProject;
 import finalProject1.entities.Entity;
+import finalProject1.entities.robots.BomityBomb;
 import finalProject1.entities.robots.HeliBot;
 import finalProject1.entities.robots.Robot;
 import finalProject1.entities.robots.Tank;
@@ -89,6 +90,15 @@ public class Opponent extends GamePlayer{
 				break;//exiting the switch case so the other parts wont run
 		
 				
+			case BomityBomb.ID:
+				if(money<BomityBomb.COST) {
+					return;//exiting the method so it doesnt try to place a robot if you dont have enough money
+					
+				} 
+				money-=BomityBomb.COST;
+				new BomityBomb(project, playerNum,x,y);
+				break;//exiting the switch case so the other parts wont run
+			
 			case Tank.ID:
 				if(money>=Tank.COST) {
 					money-=Tank.COST;
