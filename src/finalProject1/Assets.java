@@ -1,9 +1,5 @@
 package finalProject1;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-
 import finalProject1.board.Board;
 import javafx.scene.image.Image;
 import javafx.scene.text.Font;
@@ -33,16 +29,25 @@ public class Assets {
 	
 	/**
 	 * this loads a font at a specific path or returns null if it doesnt exist
-	 * it is handy so that i dont need to use a try catch whenever i want to make a font
+	 * it was more usefull when i loaded things as a file because it needed a try catch, 
+	 * but it still save writing a long line of code
 	 * @param path - a string holding the path to the font
 	 * @return - the loaded font or null if it cant be fount at the path
 	 */
-	private static Font loadFont(String path) {
-		
-	
+	private static Font loadFont(String path) {	
 			return Font.loadFont(Assets.class.getClass().getResourceAsStream(path),48);
+			
+			/*if you are using java 15 loading assets as a resource doesnt work right for some reason so you can use this way to load fonts instead
+			 * try {//trying to load the font
+				return Font.loadFont(new FileInputStream(new File(path)),48);
+			} catch (FileNotFoundException e) {//saying it couldnt find the font if it couldnt find the font
+				System.out.println("couldnt find a font at '"+path+"'");
+				e.printStackTrace();
+			}
+			return null;
+			 */
 		
-		//returning null if it wasnt able to return the font
+		
 		
 	}
 	

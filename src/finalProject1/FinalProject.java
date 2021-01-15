@@ -43,7 +43,7 @@ public class FinalProject extends Application{
 	public void start(Stage stage) throws Exception {
 		//initializing everything
 		//setting the title
-		stage.setTitle("a super cool fancy title");
+		stage.setTitle("Robot Fight Supreme!!!");
 		root=new Group();
 		//resizing the window could break the ui so i disable it
 		stage.setResizable(false);
@@ -58,11 +58,11 @@ public class FinalProject extends Application{
 	
 	
 	private void run() {
-		//creating a rectangle for the background
+		
 		clear();
 		root.setOnMousePressed(Inputs.getMouseClick());
 		root.setOnMouseMoved(Inputs.mouseMove);
-		//initializing the gamestate
+		//making the game start at the main menu
 		State.setCurrentState(new MainMenu(this));
 		 
 		timeLine.setCycleCount(Animation.INDEFINITE);//making it run forever
@@ -76,8 +76,12 @@ public class FinalProject extends Application{
 	public void remove(Node node) {
 		root.getChildren().remove(node);
 	}
+	/**
+	 * this is used to reset the screen for things like state changes
+	 */
 	public void clear() {
-		root.getChildren().clear();	
+		root.getChildren().clear();	//removing everything
+		//creating a rectangle for the background
 		Rectangle bg = new Rectangle(0, 0, 450*PIXEL_SCALE, 260*PIXEL_SCALE);
 		bg.setFill(new Color(0.1,0.1,0.1,1));//making the background the right colour
 		add(bg);//adding the background so its visible
