@@ -27,28 +27,33 @@ public class BomityBomb extends Robot{
 	
 	@Override
 	public void startTurn() {
-		moved=true;//the turret cant move so when it starts its turn it shouldnt be able to move
+		moved=true;//the bomb cant move so when it starts its turn it shouldnt be able to move
 		attacked=false;
 	}
+	
 	@Override
 	public boolean attack(int x, int y) {
+		//making it attack even if you dont click on an entity
 		if(!attackableTiles().contains(new Point(x,y))||getManager().getEntity(x, y)==this) {
 			return false;
 		}
-		for(Point i: attackableTiles()) {
+		//making everything around it get damaged
+		for(Point i: attackableTiles()) {//checking every tile it can attack
 			if(getManager().getEntity(i.x, i.y)!=null) {
-				getManager().getEntity(i.x, i.y).damage(damage);//damaging it
+				getManager().getEntity(i.x, i.y).damage(damage);//damaging it if it exists
 			}
 		}
 		return true;
 	}
+	
 	@Override
 	public ArrayList<Point> attackableTiles() {
+		//this attacks in a square so the attackable tiles are completely differnt
 		ArrayList<Point> arr = new ArrayList<>();//making the arraylist
 		//checking in a square with the length of its range
 		for(int i=-range;i<=range;i++) {
 			for(int j=-range;j<=range;j++) {
-				//making sure the tile is empty, is actually within the, and actually a place the robot can reach
+				//making sure the tile is actually within the board, and actually a place the robot can reach
 				if(Math.abs(i)+Math.abs(j)<=range&&
 						x+i>=0&&y+j>=0&&x+i<Board.WIDTH&&y+j<Board.HEIGHT) {
 					arr.add(new Point(x+i,y+j)); //adding the point if it is a movable tile

@@ -15,7 +15,7 @@ public class Assets {
 	public static final Image turret = new Image("res/turret.gif",32*FinalProject.PIXEL_SCALE,0,true,false);
 	public static final Image treadBot = new Image("res/treadBot.gif",32*FinalProject.PIXEL_SCALE,0,true,false);
 	public static final Image tower = new Image("res/tower.png",32*FinalProject.PIXEL_SCALE,0,true,false);
-	public static final Image bomb = new Image("res/bomb.png",32*FinalProject.PIXEL_SCALE,0,true,false);
+	public static final Image bomb = new Image("res/bomb.gif",32*FinalProject.PIXEL_SCALE,0,true,false);
 	public static final Image tile = new Image("res/tile.png",(Board.TILE_WIDTH+1)*FinalProject.PIXEL_SCALE,0,true,false);
 	public static final Image tileSelect = new Image("res/tileSelect.png",(Board.TILE_WIDTH+1)*FinalProject.PIXEL_SCALE,0,true,false);
 	public static final Image tileHighlight = new Image("res/tileHighlight.png",(Board.TILE_WIDTH+1)*FinalProject.PIXEL_SCALE,0,true,false);

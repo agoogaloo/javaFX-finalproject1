@@ -23,13 +23,19 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
+/**
+ * this is the player you play as when you play the game
+ *
+ */
 public class Player extends GamePlayer{
 
-	private TurnState turnState=TurnState.IDLE;
-	private Board board;
+	private TurnState turnState=TurnState.IDLE;//what 
+	private Board board;//the board the game is played on
 	private Robot selectedBot=null;
 	private int selectedCard=-1;
+	//the data that is to be sent to the opponent that tells them what youre doing
 	private String dataToSend="";
+	
 	
 	private Text turnText = new Text(120*FinalProject.PIXEL_SCALE,150*FinalProject.PIXEL_SCALE,"WAITING FOR YOUR OPPONENT");
 	private Text infoText = new Text(113*FinalProject.PIXEL_SCALE,230*FinalProject.PIXEL_SCALE,"");
@@ -40,19 +46,22 @@ public class Player extends GamePlayer{
 	private ArrayList<Integer> hand = new ArrayList<>();//the id of the robots in their hand
 	private ArrayList<Group> handPics = new ArrayList<>();//the pictures of the cards
 	private ImageView buyCard = new ImageView(Assets.deck);//the button to buy a new card
+	//the arrow that appears showing you what card your selecting
 	private ImageView selecttionArrow = new ImageView(Assets.arrow);
 	
-	private Group endTurn=new Group();
+	private Group endTurn=new Group();//the button you click to end your turn
 	
 	public Player(Board board,FinalProject project) {
 		super(project);
 		this.board=board;
 		playerNum=1;
+		//setting the location of the deck to buy from
 		buyCard.setX(208*FinalProject.PIXEL_SCALE);
 		buyCard.setY(3*FinalProject.PIXEL_SCALE);
 		
+		//the arrow will always have the same x so i set it here
 		selecttionArrow.setX(10*FinalProject.PIXEL_SCALE);
-		selecttionArrow.setVisible(false);
+		selecttionArrow.setVisible(false);//making it invisible because nothing is selected
 		
 		
 		//the text for the end turn button
@@ -67,6 +76,7 @@ public class Player extends GamePlayer{
 				20*FinalProject.PIXEL_SCALE,new Color(0.047, 0.047, 0.047, 1)));
 		endTurn.getChildren().add(endTurnText);
 		
+		//doing text things
 		turnText.setFont(Assets.boldfont);
 		turnText.setFill(Color.WHITE);
 		turnText.toFront();
@@ -75,35 +85,33 @@ public class Player extends GamePlayer{
 		infoText.setFont(Assets.font);
 		infoText.setFill(Color.WHITE);
 		
-		
+		//adding everything
 		project.add(turnText);
 		project.add(infoText);
 		project.add(endTurn);
 		project.add(buyCard);
 		project.add(selecttionArrow);
 		
+		//making you start with 2 cards
 		money+=2;
 		buyCard();
-		buyCard();
-		
-		
-		
-		
+		buyCard();		
 	}
 	
 	@Override
 	public void update() {
 		Point mouseLoc=Board.PixelsToTiles(Inputs.getX(), Inputs.getY());
-		//updating the textboxen
-		
+		//saying whether you are still waiting for your opponent to finish or not
 		if(doneTurn) {
 			turnText.setVisible(true);
 		}else {
 			turnText.setVisible(false);
 		}
-		showInfo(mouseLoc);
-		moneyText.setText("$"+money);
 		
+		showInfo(mouseLoc);//showing info on the tile being hoverd over
+		moneyText.setText("$"+money);//updating the money display
+		
+		//only letting you click things if it is still your turn
 		if(Inputs.isClicked()&&!doneTurn) {
 			onClick(mouseLoc);
 		}
@@ -113,6 +121,7 @@ public class Player extends GamePlayer{
 			//setting the card to be in the right place case other cards have been played
 			handPics.get(i).setTranslateY((i*35+12)*FinalProject.PIXEL_SCALE);
 		}
+		//letting you know what card you have selected
 		if(turnState==TurnState.ROBOTSELECT) {
 			highlightSelection();
 		}
@@ -121,26 +130,23 @@ public class Player extends GamePlayer{
 	
 	private void onClick(Point mouseLoc) {
 		if(turnState==TurnState.BUYBOT) {
+			//if a card is already selected then it will buy it
 			buyBot(mouseLoc,hand.get(selectedCard));
-			//making sure you cant do anytihng other than place a card so you dont mess up 
-			//the card selection
-			//return;
 		}
 		//doing things if a robot has been selected to move/attack
 		if(turnState==TurnState.ROBOTSELECT) {
-			System.out.println("doing things");
+			//the robot should be unselected after you click again
 			turnState=TurnState.IDLE;
 			//moving the robot if the robot is able to move
 			if(selectedBot.canMove()) {
+				//telling the opponent that we moveed a robot and they should as well
 				String seperator=String.valueOf(NetworkData.SEPERATOR);
 				dataToSend=NetworkData.MOVE+seperator+selectedBot.getX()
 				+seperator+selectedBot.getY()+seperator+mouseLoc.x+seperator+mouseLoc.y;
 				if(!selectedBot.move(mouseLoc.x, mouseLoc.y)) {
-					dataToSend="";
-					
-					
-										
+					dataToSend="";										
 				}
+				
 			//attacking if the robot has already moved and can still attack
 			}else if (selectedBot.canAttack()) {
 				String seperator=String.valueOf(NetworkData.SEPERATOR);
@@ -186,8 +192,7 @@ public class Player extends GamePlayer{
 		
 		//this part creates the card out of a few  pictures and textboxes
 		Group card = new Group();//the card to be added
-		
-		
+
 		
 		card.setTranslateX(10*FinalProject.PIXEL_SCALE);
 		
@@ -243,10 +248,17 @@ public class Player extends GamePlayer{
 		
 	}
 	
+	/**
+	 * this lets the player buy and place the robot they select
+	 * @param loc - where the robot is being placed
+	 * @param id - the id of the robot being bought
+	 */
 	private void buyBot(Point loc, int id) {
-		turnState=TurnState.IDLE;
-		selecttionArrow.setVisible(false);
+		turnState=TurnState.IDLE;//going back to an idle state
+		selecttionArrow.setVisible(false);//making the selection arrow go away
+		//moving the card back to its original place
 		handPics.get(selectedCard).setTranslateX(10*FinalProject.PIXEL_SCALE);
+		//making sure there isnt already somthing there and they are trying to place the robot in the 1st 2 rows
 		if(loc.x>=0&&loc.y>=0&&loc.x<=1&&loc.y<Board.HEIGHT
 				&&Entity.getManager().getEntity(loc.x, loc.y)==null) {
 			switch(id) {
@@ -291,9 +303,11 @@ public class Player extends GamePlayer{
 				new TreadBot(project, playerNum,loc.x,loc.y).endTurn();
 				break;
 			}
+			//it returns from the method if it wasnt able to place it so this is only called once the robot is placed
+			//telling the opponent to add a robot as well
 			String seperator=String.valueOf(NetworkData.SEPERATOR);
 			dataToSend=NetworkData.BUYBOT+seperator+id+seperator+loc.x+seperator+loc.y;
-			turnState=TurnState.IDLE;
+			//removing the card from the hand and screen
 			hand.remove(selectedCard);
 			project.remove(handPics.get(selectedCard));
 			handPics.remove(selectedCard);
@@ -307,7 +321,7 @@ public class Player extends GamePlayer{
 			//doing things if the card has been clicked so it can be played
 			if(handPics.get(i).isPressed()&&turnState==TurnState.IDLE) {
 				turnState=TurnState.BUYBOT;
-				selecttionArrow.setVisible(true);
+				selecttionArrow.setVisible(true);//making the arrow visible now that a card is selected
 				selecttionArrow.setY((i*35+12+22)*FinalProject.PIXEL_SCALE);
 				handPics.get(i).setTranslateX(17*FinalProject.PIXEL_SCALE);
 				//making sure we can tell what card they seleected outside of the loop
@@ -332,23 +346,35 @@ public class Player extends GamePlayer{
 		}
 	}
 	
+	/**
+	 * this shows info for things like entities or the deck of cards
+	 * @param mouseLoc - the mouses location in tiles
+	 */
 	private void showInfo(Point mouseLoc) {
+		//getting the entity hovered over or null if there isnt one
 		Entity e=Entity.getManager().getEntity(mouseLoc.x, mouseLoc.y);
-		endTurn.setVisible(false);
+		endTurn.setVisible(false);//making the end turn button invisible
 		if(e!=null) {
+			//giving info on entities
 			infoText.setText(e.getDescription().toUpperCase());
 		}else if(buyCard.isHover()) {
+			//giving info on the deck
 			infoText.setText("buy a card for $1");
 		}else {
+			//making the end turn button visible if you arent hovering over something
 			endTurn.setVisible(true);
-			infoText.setText("");
+			infoText.setText("");//resenting the info text
 		}
 		
 	}
+	/**
+	 * this gets any data that needs to be sent to the opponent 
+	 * @return - the string of data to send
+	 */
 	public String getDataToSend() {
 		String value=dataToSend;
-		dataToSend="";
-		
+		dataToSend="";//reseting data to send so it only gets sent once
+		//returning the value
 		return value;
 	}
 }

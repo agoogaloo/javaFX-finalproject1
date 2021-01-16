@@ -13,10 +13,13 @@ public class Board {
 	public static final int TILE_WIDTH=31, TILE_HEIGHT=23, OFFSET_X=113,OFFSET_Y=50;
 	public static final int WIDTH=7,HEIGHT=7;
 	
-	private ImageView[][] tiles = new ImageView[WIDTH][HEIGHT];
+	private ImageView[][] tiles = new ImageView[WIDTH][HEIGHT];//the images of the tiles for the board
+	
 	public Board(FinalProject project) {
+		
 		for(int i=0;i<HEIGHT;i++) {
 			for(int j=0;j<WIDTH;j++) {
+				//adding a tile for every width and height of the board
 				ImageView tile =new ImageView(Assets.tile);
 				Point location=tilesToPixels(j, i);
 				
@@ -30,16 +33,29 @@ public class Board {
 		
 	}
 	
+	/**
+	 * this lets us highlight a specific tile on the board
+	 * @param x - x coordinate in tiles
+	 * @param y - y coordinate in tiles
+	 */
 	public void highlightTile(int x, int y) {
-		if(x>=0&&y>=0&&x<WIDTH&&y<HEIGHT)
-			tiles[x][y].setImage(Assets.tileHighlight);
+		if(x>=0&&y>=0&&x<WIDTH&&y<HEIGHT)//making sure its actually on the board
+			tiles[x][y].setImage(Assets.tileHighlight);//changing the image to a highlighted tile image
 		
 	}
+	/**
+	 * like the highlight tile method but it changes it to the selection tile instead
+	 * @param x
+	 * @param y
+	 */
 	public void selectTile(int x, int y) {
 		if(x>=0&&y>=0&&x<WIDTH&&y<HEIGHT)
 			tiles[x][y].setImage(Assets.tileSelect);
 		
 	}
+	/** 
+	 * this resets all the tiles back to the default tile
+	 */
 	public void reset() {
 		for(int i=0;i<tiles.length;i++) {
 			for(int j=0;j<tiles[0].length;j++) {

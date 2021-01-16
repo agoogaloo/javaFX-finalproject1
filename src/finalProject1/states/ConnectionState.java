@@ -37,23 +37,24 @@ public class ConnectionState extends State{
 	
 	//this throws an error if it cant create a socket for some reason
 	public ConnectionState(FinalProject project, String ip) throws IOException {
-		//assigning the variables we got as paramiters
+		//assigning the variables we got as parameters
 		this.project=project;
 		this.ip=ip;
 		//doing server making things if they are making a server
 		if(ip.equals("server")) {
 			isServer=true;
 			//connecting to opponent as a server
-			socketGetter=new SocketGetter(new ServerSocket(69));
+			socketGetter=new SocketGetter(new ServerSocket(50));
 			//showing their ip address so that the opponent knows where to connect to
-			info.setText("tell your oponent to join "+InetAddress.getLocalHost().getHostAddress());	
+			info.setText("tell your opponent to join "+InetAddress.getLocalHost().getHostAddress());	
 		//doing client connecty things if they are a client
 		}else {
 			isServer=false;
 			//connecting to opponent as a client
 			socketGetter=new SocketGetter(ip);
-			info.setText("connecting to "+ip);	
+			info.setText("connecting to "+ip);//saying that they are connecting
 		}
+		//starting the socket getter thread to get the socket
 		socketGetter.start();
 		System.out.println("isserver:"+isServer);
 
@@ -61,8 +62,9 @@ public class ConnectionState extends State{
 	
 	@Override
 	public void start() {
-		//the play button
-		Text endTurnText=new Text(13*FinalProject.PIXEL_SCALE, 20*FinalProject.PIXEL_SCALE, "clickity click");
+		//creating all the ui things
+		//the button to click when your ready
+		Text endTurnText=new Text(13*FinalProject.PIXEL_SCALE, 20*FinalProject.PIXEL_SCALE, "READY");
 		endTurnText.setFill(Color.WHITE);
 		endTurnText.setFont(Assets.boldfont);
 		//moving the endturn button to the right spot and adding the graphics to it
@@ -76,34 +78,31 @@ public class ConnectionState extends State{
 		info.setFill(Color.WHITE);
 		info.setFont(Assets.font);
 				
-		
+		//adding stuff to the screen
 		project.add(startButton);
-		project.add(info);
-		
-		
-		
-		
-		
+		project.add(info);		
 	}
 	
 	@Override
 	public void update() {
+		//checking if they just connected to the opponent
 		if(socketGetter.hasSocket()&&opponent==null) {
-			
+			//creating the opponent data and saying that they are connected
 			opponent=new NetworkData(socketGetter.getSocket(),ip);
 			info.setText("connected to "+socketGetter.getSocket().getInetAddress().getHostName());
 		}
-		
+		//saying that you are ready if you have connected to the other person and you have clicked the button
 		if(opponent!=null&&startButton.isPressed()) {
 			opponent.sendData("ready");
 			ready=true;
 			info.setText("ready and waiting for opponent start");
 		}
+		//saying that the opponent is ready if they have sent the ready signal
 		if(opponent!=null&&opponent.getData().equals("ready")) {
 			info.setText("your opponent is ready to start");
 			opponentReady=true;
 		}
-		
+		//starting the game if both you and your opponent are ready
 		if(ready&&opponentReady) {
 			setCurrentState(new GameState(project, opponent,isServer));
 		}
@@ -111,6 +110,7 @@ public class ConnectionState extends State{
 
 	@Override
 	public void end() {
+		//clearing the screen when the state ends
 		project.clear();
 	}
 }
@@ -120,7 +120,7 @@ public class ConnectionState extends State{
  * and if it is in the same thread nothing else will run when it tries to connect. 
  *
  */
-class SocketGetter extends Thread{//extinding thread so it can be a thread
+class SocketGetter extends Thread{//extending thread so it can be a thread
 	boolean isServer;//if it is a server of not
 	ServerSocket server;//the server it uses if it is a server
 	String ip;//the ip address that it should connect to if it is a client
@@ -159,7 +159,7 @@ class SocketGetter extends Thread{//extinding thread so it can be a thread
 		}else {
 			//trying to connect with the server
 			try {
-				socket=new Socket(InetAddress.getByName(ip),69);
+				socket=new Socket(InetAddress.getByName(ip),50);
 			} catch (UnknownHostException e) {
 				System.out.println("a server with ip '"+ip+"' couldnt be found");
 				e.printStackTrace();
